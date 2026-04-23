@@ -8,17 +8,6 @@
   </head>
   <body>
 
-    <!-- ─── Desktop Navbar ────────────────────────────────────────────────────── -->
-    <header id="siteHeader">
-      <a href="#intro" class="site-logo">DOCK50</a>
-      <nav class="site-nav">
-        <a href="#intro"     class="site-nav-link"><span class="sn-dot"></span><span class="sn-text">Home</span><span class="sn-big-dot"><span class="sn-big-dot-arrow">↗</span></span><span class="sn-bar-track"></span><span class="sn-bar-fill"></span></a>
-        <a href="#spotlight" class="site-nav-link"><span class="sn-dot"></span><span class="sn-text">Events</span><span class="sn-big-dot"><span class="sn-big-dot-arrow">↗</span></span><span class="sn-bar-track"></span><span class="sn-bar-fill"></span></a>
-        <a href="#location"  class="site-nav-link"><span class="sn-dot"></span><span class="sn-text">Location</span><span class="sn-big-dot"><span class="sn-big-dot-arrow">↗</span></span><span class="sn-bar-track"></span><span class="sn-bar-fill"></span></a>
-        <a href="#contact"   class="site-nav-link"><span class="sn-dot"></span><span class="sn-text">Contact</span><span class="sn-big-dot"><span class="sn-big-dot-arrow">↗</span></span><span class="sn-bar-track"></span><span class="sn-bar-fill"></span></a>
-      </nav>
-    </header>
-
     <!-- ─── Fixer globaler Page-Counter oben links ─────────────────────────── -->
     <div id="pageLabel">
       <div id="pageLabelTrack">
@@ -184,20 +173,6 @@
       </div>
     </section>
 
-    <!-- ─── Spotlight filter (fixed, desktop only) ─────────────────────────── -->
-    <div id="spotFilter" aria-hidden="true">
-      <button class="sf-btn sf-active" data-city="all">Alle</button>
-      <button class="sf-btn" data-city="flensburg">Flensburg</button>
-      <button class="sf-btn" data-city="hamburg">Hamburg</button>
-      <button class="sf-btn" data-city="kiel">Kiel</button>
-    </div>
-
-    <!-- ─── Snap-click hint ───────────────────────────────────────────────────── -->
-    <div id="snapClickHint" aria-hidden="true">
-      <span class="sch-dot"></span>
-      <span class="sch-text">Details anzeigen</span>
-    </div>
-
     <!-- ─── Events / Spotlight ──────────────────────────────────────────────── -->
     <section class="spotlight snap-section" id="spotlight">
 
@@ -211,39 +186,39 @@
       </div>
 
       <div class="project-images">
-        <div class="project-img" data-index="0" data-city="flensburg"><img src="/event-back2dock.jpg" alt="" /></div>
+        <div class="project-img" data-index="0" data-location="Flensburg"><img src="/event-back2dock.jpg" alt="" /></div>
         <div class="project-divider"><span class="project-divider-num">01 — FLN · 2026</span><span class="project-divider-mark">✦</span></div>
-        <div class="project-img" data-index="1" data-city="hamburg"><img src="/event-jerome.jpg" alt="" /></div>
+        <div class="project-img" data-index="1" data-location="Hamburg"><img src="/event-jerome.jpg" alt="" /></div>
         <div class="project-divider"><span class="project-divider-num">02 — HH · 2026</span><span class="project-divider-mark">✦</span></div>
-        <div class="project-img" data-index="2" data-city="flensburg"><img src="/event-sixteenbeats.jpg" alt="" /></div>
+        <div class="project-img" data-index="2" data-location="Flensburg"><img src="/event-sixteenbeats.jpg" alt="" /></div>
         <div class="project-divider"><span class="project-divider-num">03 — FLN · 2026</span><span class="project-divider-mark">✦</span></div>
-        <div class="project-img" data-index="3" data-city="kiel"><img src="/event-strictlyoldschool.jpg" alt="" /></div>
+        <div class="project-img" data-index="3" data-location="Kiel"><img src="/event-strictlyoldschool.jpg" alt="" /></div>
         <div class="project-divider"><span class="project-divider-num">04 — KI · 2026</span><span class="project-divider-mark">✦</span></div>
-        <div class="project-img" data-index="4" data-city="flensburg"><img src="/event-kuult.jpg" alt="" /></div>
+        <div class="project-img" data-index="4" data-location="Flensburg"><img src="/event-kuult.jpg" alt="" /></div>
         <div class="project-divider"><span class="project-divider-num">05 — FLN · 2026</span><span class="project-divider-mark">✦</span></div>
-        <div class="project-img" data-index="5" data-city="hamburg"><img src="/doc50-concert-1.jpg" alt="" /></div>
+        <div class="project-img" data-index="5" data-location="Hamburg"><img src="/doc50-concert-1.jpg" alt="" /></div>
         <div class="project-divider"><span class="project-divider-num">06 — HH · 2026</span><span class="project-divider-mark">✦</span></div>
-        <div class="project-img" data-index="6" data-city="kiel"><img src="/doc50-concert-2.jpg" alt="" /></div>
+        <div class="project-img" data-index="6" data-location="Kiel"><img src="/doc50-concert-2.jpg" alt="" /></div>
         <div class="project-divider"><span class="project-divider-num">07 — KI · 2026</span><span class="project-divider-mark">✦</span></div>
-        <div class="project-img" data-index="7" data-city="flensburg"><img src="/doc50-concert-3.jpg" alt="" /></div>
+        <div class="project-img" data-index="7" data-location="Flensburg"><img src="/doc50-concert-3.jpg" alt="" /></div>
         <div class="project-divider"><span class="project-divider-num">08 — FLN · 2026</span><span class="project-divider-mark">✦</span></div>
-        <div class="project-img" data-index="8" data-city="hamburg"><img src="/doc50-concert-5.jpg" alt="" /></div>
+        <div class="project-img" data-index="8" data-location="Hamburg"><img src="/doc50-concert-5.jpg" alt="" /></div>
         <div class="project-divider"><span class="project-divider-num">09 — HH · 2026</span><span class="project-divider-mark">✦</span></div>
-        <div class="project-img" data-index="9" data-city="kiel"><img src="/doc50-concert-6.jpg" alt="" /></div>
+        <div class="project-img" data-index="9" data-location="Kiel"><img src="/doc50-concert-6.jpg" alt="" /></div>
       </div>
 
       <!-- Titel: sicherer Abstand zum Burger oben -->
       <div class="project-names">
-        <div class="project-name-item" data-index="0" data-city="flensburg"><span class="proj-num">01</span><p>Back2Dock</p></div>
-        <div class="project-name-item" data-index="1" data-city="hamburg"><span class="proj-num">02</span><p>Jerome</p></div>
-        <div class="project-name-item" data-index="2" data-city="flensburg"><span class="proj-num">03</span><p>Sixteen Beats</p></div>
-        <div class="project-name-item" data-index="3" data-city="kiel"><span class="proj-num">04</span><p>Strictly Oldschool</p></div>
-        <div class="project-name-item" data-index="4" data-city="flensburg"><span class="proj-num">05</span><p>Kuult</p></div>
-        <div class="project-name-item" data-index="5" data-city="hamburg"><span class="proj-num">06</span><p>Live @ Dock50</p></div>
-        <div class="project-name-item" data-index="6" data-city="kiel"><span class="proj-num">07</span><p>Live @ Dock50</p></div>
-        <div class="project-name-item" data-index="7" data-city="flensburg"><span class="proj-num">08</span><p>Live @ Dock50</p></div>
-        <div class="project-name-item" data-index="8" data-city="hamburg"><span class="proj-num">09</span><p>Live @ Dock50</p></div>
-        <div class="project-name-item" data-index="9" data-city="kiel"><span class="proj-num">10</span><p>Live @ Dock50</p></div>
+        <div class="project-name-item" data-index="0" data-location="Flensburg"><span class="proj-num">01</span><p>Back2Dock</p></div>
+        <div class="project-name-item" data-index="1" data-location="Hamburg"><span class="proj-num">02</span><p>Jerome</p></div>
+        <div class="project-name-item" data-index="2" data-location="Flensburg"><span class="proj-num">03</span><p>Sixteen Beats</p></div>
+        <div class="project-name-item" data-index="3" data-location="Kiel"><span class="proj-num">04</span><p>Strictly Oldschool</p></div>
+        <div class="project-name-item" data-index="4" data-location="Flensburg"><span class="proj-num">05</span><p>Kuult</p></div>
+        <div class="project-name-item" data-index="5" data-location="Hamburg"><span class="proj-num">06</span><p>Live @ Dock50</p></div>
+        <div class="project-name-item" data-index="6" data-location="Kiel"><span class="proj-num">07</span><p>Live @ Dock50</p></div>
+        <div class="project-name-item" data-index="7" data-location="Flensburg"><span class="proj-num">08</span><p>Live @ Dock50</p></div>
+        <div class="project-name-item" data-index="8" data-location="Hamburg"><span class="proj-num">09</span><p>Live @ Dock50</p></div>
+        <div class="project-name-item" data-index="9" data-location="Kiel"><span class="proj-num">10</span><p>Live @ Dock50</p></div>
       </div>
     </section>
 
@@ -527,78 +502,48 @@
     </section>
 
     <!-- ─── Contact ────────────────────────────────────────────────────────────── -->
-    <section class="contact snap-section" id="contact">
-      <p class="ct-eyebrow">DOCK50 · KONTAKT</p>
-      <div class="ct-tabs">
-
-        <!-- KONTAKT -->
-        <div class="ct-tab ct-active" data-tab="kontakt">
-          <div class="ct-tab-head">
-            <h2 class="ct-tab-title">KONTAKT</h2>
-            <div class="ct-dot"></div>
+    <section class="contact-sec snap-section" id="contact">
+      <div class="cs-city-bg" aria-hidden="true">Flensburg</div>
+      <div class="cs-body">
+        <div class="cs-left">
+          <p class="cs-eyebrow">DOCK50 · KONTAKT</p>
+          <p class="cs-name">DOCK50</p>
+          <div class="cs-coords">54°46′N · 9°26′E</div>
+          <div class="cs-divider"></div>
+          <div class="cs-grid">
+            <div class="cs-col">
+              <span class="cs-col-label">Adresse</span>
+              <p class="cs-col-val">Schiffbrücke 50</p>
+              <p class="cs-col-val">24939 Flensburg</p>
+            </div>
+            <div class="cs-col">
+              <span class="cs-col-label">Ansprechpartner</span>
+              <p class="cs-col-val">Max Mustermann</p>
+              <p class="cs-col-val"><a href="mailto:info@dock50.de" class="cs-link">info@dock50.de</a></p>
+              <p class="cs-col-val">+49 1767 1957983</p>
+            </div>
           </div>
-          <div class="ct-tab-body">
-            <form class="ct-form" data-subject="Kontaktanfrage DOCK50">
-              <div class="ct-field-row">
-                <div class="ct-field">
-                  <label class="ct-label">Name *</label>
-                  <input class="ct-input" type="text" name="Name" required/>
-                </div>
-                <div class="ct-field">
-                  <label class="ct-label">E-Mail *</label>
-                  <input class="ct-input" type="email" name="E-Mail" required/>
-                </div>
-              </div>
-              <div class="ct-field">
-                <label class="ct-label">Nachricht *</label>
-                <textarea class="ct-textarea ct-textarea--tall" name="Nachricht" required></textarea>
-              </div>
-              <button class="ct-submit" type="submit">Nachricht senden ↗</button>
-            </form>
-          </div>
-        </div>
-
-        <!-- Divider -->
-        <div class="ct-divider" aria-hidden="true"></div>
-
-        <!-- KARRIERE -->
-        <div class="ct-tab" data-tab="karriere">
-          <div class="ct-tab-head">
-            <h2 class="ct-tab-title">KARRIERE</h2>
-            <div class="ct-dot"></div>
-          </div>
-          <div class="ct-tab-body">
-            <form class="ct-form" data-subject="Bewerbung DOCK50">
-              <div class="ct-field-row">
-                <div class="ct-field">
-                  <label class="ct-label">Name *</label>
-                  <input class="ct-input" type="text" name="Name" required/>
-                </div>
-                <div class="ct-field">
-                  <label class="ct-label">E-Mail *</label>
-                  <input class="ct-input" type="email" name="E-Mail" required/>
-                </div>
-              </div>
-              <div class="ct-field-row">
-                <div class="ct-field">
-                  <label class="ct-label">Position</label>
-                  <input class="ct-input" type="text" name="Position"/>
-                </div>
-                <div class="ct-field">
-                  <label class="ct-label">Telefon</label>
-                  <input class="ct-input" type="tel" name="Telefon"/>
-                </div>
-              </div>
-              <div class="ct-field">
-                <label class="ct-label">Nachricht *</label>
-                <textarea class="ct-textarea ct-textarea--tall" name="Nachricht" required></textarea>
-              </div>
-              <button class="ct-submit" type="submit">Bewerbung senden ↗</button>
-            </form>
+          <div class="cs-bottom-row">
+            <div class="cs-status-row">
+              <span class="cs-status-dot"></span>
+              <span class="cs-status-text">Offen für Buchungen</span>
+            </div>
+            <a href="/anfrage.html" class="cs-cta-main">Verfügbarkeit anfragen ↗</a>
           </div>
         </div>
-
+        <div class="cs-img-wrap">
+          <img src="/doc50-concert-4.jpg" alt="DOCK50 Venue" />
+        </div>
       </div>
+      <!-- scaffold accents -->
+      <div class="sc-acc sc-cross sc-cross--tl" aria-hidden="true"></div>
+      <div class="sc-acc sc-cross sc-cross--tr" aria-hidden="true"></div>
+      <div class="sc-acc sc-cross sc-cross--br" aria-hidden="true"></div>
+      <div class="sc-acc sc-corner-bl" aria-hidden="true"></div>
+      <div class="cs-sc-corner-tr" aria-hidden="true"></div>
+      <div class="cs-sc-vline-l" aria-hidden="true"></div>
+      <div class="cs-sc-vline-r" aria-hidden="true"></div>
+      <div class="cs-sc-brace" aria-hidden="true"></div>
     </section>
 
     <!-- ─── Footer ───────────────────────────────────────────────────────────── -->
@@ -666,29 +611,32 @@
       </div>
     </footer>
 
-    <!-- ─── Spotlight Detail Panel ─────────────────────────────────────────── -->
-    <div id="spotDetailOuter" style="display:none;">
-      <div class="sd-overlay"></div>
-      <div id="spotDetail">
-        <div class="sd-info">
-          <button class="sd-close">✕ SCHLIESSEN</button>
-          <div class="sd-inner">
-            <span class="sd-num"></span>
-            <h2 class="sd-name"></h2>
-            <p class="sd-artist"></p>
-            <div class="sd-divider"></div>
-            <p class="sd-date"></p>
-            <a href="/anfrage.html" class="sd-cta">
-              <span class="sd-cta-text">Tickets anfragen</span>
-              <span class="sd-cta-arrow">→</span>
-            </a>
-          </div>
-        </div>
-        <div class="sd-img-wrap">
-          <img src="" alt="" />
-        </div>
+    <!-- ─── Event Filter Bar ─────────────────────────────────────────────────── -->
+    <div id="eventFilter" class="event-filter" aria-hidden="true">
+      <div class="ef-track">
+        <button class="ef-item active" data-filter="all">Alle</button>
+        <button class="ef-item" data-filter="Flensburg">Flensburg</button>
+        <button class="ef-item" data-filter="Hamburg">Hamburg</button>
+        <button class="ef-item" data-filter="Kiel">Kiel</button>
+        <div class="ef-indicator"></div>
       </div>
     </div>
+
+    <!-- ─── Event Info Button rechts ────────────────────────────────────────── -->
+    <div id="eventInfoBtn" class="event-info-btn" aria-hidden="true">
+      <div class="eib-line"></div>
+      <span class="eib-label">Info</span>
+      <span class="eib-arrow">↗</span>
+    </div>
+
+    <!-- ─── Event Side Panel ──────────────────────────────────────────────── -->
+    <div id="eventSidePanel" class="esp" aria-hidden="true">
+      <div class="esp-inner">
+        <button class="esp-close" id="espClose">✕</button>
+        <div class="esp-content" id="espContent"></div>
+      </div>
+    </div>
+    <div id="espBackdrop" class="esp-backdrop"></div>
 
     <script type="module" src="src/script.js"></script>
   </body>

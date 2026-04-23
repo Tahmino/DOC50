@@ -23,212 +23,22 @@ ScrollTrigger.scrollerProxy(document.documentElement, {
 });
 
 // ─── Event Data ──────────────────────────────────────────────────────────────
-const EVENTS = [
-  { num: "01", name: "Back2Dock",          artist: "Various Artists",  date: "14.03.26", city: "flensburg" },
-  { num: "02", name: "Jerome",             artist: "Jerome",           date: "21.03.26", city: "hamburg"   },
-  { num: "03", name: "Sixteen Beats",      artist: "DJ Collective",    date: "28.03.26", city: "flensburg" },
-  { num: "04", name: "Strictly Oldschool", artist: "Various DJs",      date: "04.04.26", city: "kiel"      },
-  { num: "05", name: "Kuult",              artist: "Kuult",            date: "11.04.26", city: "flensburg" },
-  { num: "06", name: "Live @ Dock50",      artist: "TBA",              date: "18.04.26", city: "hamburg"   },
-  { num: "07", name: "Live @ Dock50",      artist: "TBA",              date: "25.04.26", city: "kiel"      },
-  { num: "08", name: "Live @ Dock50",      artist: "TBA",              date: "02.05.26", city: "flensburg" },
-  { num: "09", name: "Live @ Dock50",      artist: "TBA",              date: "09.05.26", city: "hamburg"   },
-  { num: "10", name: "Live @ Dock50",      artist: "TBA",              date: "16.05.26", city: "kiel"      },
+const eventData = [
+  { artist: "Various Artists", title: "Back2Dock",          date: "14.03.26", location: "Flensburg", category: "Club Night",  hasTicket: true,  ticketUrl: "/anfrage.html", desc: "Eine Nacht voller Energie und Beats – die traditionelle Back2Dock-Nacht kehrt zurück ins Dock50." },
+  { artist: "Jerome",          title: "Jerome",             date: "21.03.26", location: "Hamburg",   category: "Live Music",  hasTicket: true,  ticketUrl: "/anfrage.html", desc: "Jerome bringt seinen unverwechselbaren Sound live auf die Dock50-Bühne in Hamburg." },
+  { artist: "DJ Collective",   title: "Sixteen Beats",      date: "28.03.26", location: "Flensburg", category: "Club Night",  hasTicket: true,  ticketUrl: "/anfrage.html", desc: "Das DJ Collective bringt sechzehn Beats, die die Nacht zum Leben erwecken." },
+  { artist: "Various DJs",     title: "Strictly Oldschool", date: "04.04.26", location: "Kiel",      category: "Club Night",  hasTicket: true,  ticketUrl: "/anfrage.html", desc: "Eine Nacht ganz im Zeichen der klassischen Sounds – Strictly Oldschool im Dock50 Kiel." },
+  { artist: "Kuult",           title: "Kuult",              date: "11.04.26", location: "Flensburg", category: "Live Music",  hasTicket: true,  ticketUrl: "/anfrage.html", desc: "Kuult live – emotionale Songs und kraftvolle Bühnenperformance im Dock50 Flensburg." },
+  { artist: "TBA",             title: "Live @ Dock50",      date: "18.04.26", location: "Hamburg",   category: "Live Music",  hasTicket: false, ticketUrl: "",              desc: "Details folgen – ein besonderer Abend im Dock50 Hamburg. Stay tuned." },
+  { artist: "TBA",             title: "Live @ Dock50",      date: "25.04.26", location: "Kiel",      category: "Live Music",  hasTicket: false, ticketUrl: "",              desc: "Details folgen – ein besonderer Abend im Dock50 Kiel. Stay tuned." },
+  { artist: "TBA",             title: "Live @ Dock50",      date: "02.05.26", location: "Flensburg", category: "Live Music",  hasTicket: false, ticketUrl: "",              desc: "Details folgen – ein besonderer Abend im Dock50 Flensburg. Stay tuned." },
+  { artist: "TBA",             title: "Live @ Dock50",      date: "09.05.26", location: "Hamburg",   category: "Live Music",  hasTicket: false, ticketUrl: "",              desc: "Details folgen – ein besonderer Abend im Dock50 Hamburg. Stay tuned." },
+  { artist: "TBA",             title: "Live @ Dock50",      date: "16.05.26", location: "Kiel",      category: "Live Music",  hasTicket: false, ticketUrl: "",              desc: "Details folgen – ein besonderer Abend im Dock50 Kiel. Stay tuned." },
 ];
 
-// ─── Detail-Panel Refs ────────────────────────────────────────────────────────
-const spotDetailOuter = document.getElementById("spotDetailOuter");
-const spotDetail      = document.getElementById("spotDetail");
-const sdOverlay       = spotDetailOuter?.querySelector(".sd-overlay");
-const sdImgWrap       = spotDetail?.querySelector(".sd-img-wrap");
-const sdNum           = spotDetail?.querySelector(".sd-num");
-const sdName          = spotDetail?.querySelector(".sd-name");
-const sdArtist        = spotDetail?.querySelector(".sd-artist");
-const sdDate          = spotDetail?.querySelector(".sd-date");
-const sdImg           = spotDetail?.querySelector(".sd-img-wrap img");
-const sdClose         = spotDetail?.querySelector(".sd-close");
-const sdCtaArrow      = spotDetail?.querySelector(".sd-cta-arrow");
-const sdCta           = spotDetail?.querySelector(".sd-cta");
-const snapHint        = document.getElementById("snapClickHint");
-const spotFilter      = document.getElementById("spotFilter");
-
-// ─── Module-scope state (accessible from both openDetail and closeDetail) ─────
-let detailOpen       = false;
-let detailIndex      = -1;
-let projectImgs      = null;
-let flyEl            = null;
-let imgPanelRect     = null;
-let activeFilterCity  = null;   // null = show all
-let moveDistImages    = 0;      // shared between spotlight onUpdate and filter handler
-let spImagesContainer = null;   // ref to .project-images, set during spotlight init
-
-// Snap state at module scope so closeDetail can reset them safely
-let spotSnapTimer  = null;
-let spotIsSnapping = false;
-let navScrolling   = false;  // true while a navbar-initiated scroll is in flight
-let spST           = null;   // spotlight ScrollTrigger instance
-
-// ─── Snap hint helpers ────────────────────────────────────────────────────────
-function showSnapHint() {
-  if (!snapHint) return;
-  gsap.to(snapHint, { opacity: 1, duration: 0.35, ease: "power2.out" });
-}
-function hideSnapHint() {
-  if (!snapHint) return;
-  gsap.to(snapHint, { opacity: 0, duration: 0.2, ease: "power2.in" });
-}
-
-// ─── Open Detail ─────────────────────────────────────────────────────────────
-function openDetail(i) {
-  if (detailOpen || !spotDetailOuter || !spotDetail || !projectImgs) return;
-  detailOpen  = true;
-  detailIndex = i;
-  lenis.stop();
-  hideSnapHint();
-
-  const ev = EVENTS[i];
-  if (sdNum)    sdNum.textContent    = ev.num;
-  if (sdName)   sdName.textContent   = ev.name;
-  if (sdArtist) sdArtist.textContent = ev.artist;
-  if (sdDate)   sdDate.textContent   = ev.date;
-
-  const activeImgEl = projectImgs[i];
-  const srcImg = activeImgEl?.querySelector("img");
-
-  if (sdImg && srcImg) sdImg.src = srcImg.src;
-  if (sdImg) gsap.set(sdImg, { opacity: 0 });
-
-  // Show panel at scale:1 briefly to measure target rect
-  gsap.set(spotDetailOuter, { display: "flex", pointerEvents: "auto" });
-  gsap.set(sdOverlay,  { opacity: 0 });
-  gsap.set(spotDetail, { scale: 1, opacity: 0 });
-
-  imgPanelRect = sdImgWrap ? sdImgWrap.getBoundingClientRect() : null;
-  gsap.set(spotDetail, { scale: 0 }); // reset to start
-
-  const srcRect = srcImg ? srcImg.getBoundingClientRect() : null;
-  if (srcImg) gsap.set(srcImg, { opacity: 0 });
-
-  if (flyEl) { flyEl.remove(); flyEl = null; }
-
-  if (srcRect && imgPanelRect) {
-    flyEl = document.createElement("div");
-    Object.assign(flyEl.style, {
-      position: "fixed", top: "0px", left: "0px",
-      width: srcRect.width + "px", height: srcRect.height + "px",
-      zIndex: "9999", pointerEvents: "none", overflow: "hidden",
-    });
-    gsap.set(flyEl, { x: srcRect.left, y: srcRect.top });
-    const cloneImg = document.createElement("img");
-    cloneImg.src = srcImg.src;
-    Object.assign(cloneImg.style, { width: "100%", height: "100%", objectFit: "cover", display: "block" });
-    flyEl.appendChild(cloneImg);
-    document.body.appendChild(flyEl);
-  }
-
-  const DUR = 0.52, EASE = "power3.inOut";
-  gsap.to(spotDetail, { scale: 1, opacity: 1, duration: DUR, ease: EASE });
-  gsap.to(sdOverlay,  { opacity: 1, duration: DUR * 0.65, ease: "power2.out" });
-
-  if (flyEl && imgPanelRect) {
-    gsap.to(flyEl, {
-      x: imgPanelRect.left, y: imgPanelRect.top,
-      width: imgPanelRect.width, height: imgPanelRect.height,
-      duration: DUR, ease: EASE,
-      onComplete: () => {
-        if (sdImg) gsap.set(sdImg, { opacity: 1 });
-        flyEl?.remove(); flyEl = null;
-      },
-    });
-  }
-}
-
-// ─── Close Detail ─────────────────────────────────────────────────────────────
-function closeDetail() {
-  if (!detailOpen || !spotDetailOuter) return;
-
-  const activeImgEl = projectImgs?.[detailIndex];
-  const srcImg      = activeImgEl?.querySelector("img");
-  const panelImgRect = sdImgWrap ? sdImgWrap.getBoundingClientRect() : null;
-  const tgtRect      = srcImg ? srcImg.getBoundingClientRect() : null;
-
-  let closeFlyEl = null;
-  if (panelImgRect && tgtRect && sdImg) {
-    closeFlyEl = document.createElement("div");
-    Object.assign(closeFlyEl.style, {
-      position: "fixed", top: "0px", left: "0px",
-      width: panelImgRect.width + "px", height: panelImgRect.height + "px",
-      zIndex: "9999", pointerEvents: "none", overflow: "hidden",
-    });
-    gsap.set(closeFlyEl, { x: panelImgRect.left, y: panelImgRect.top });
-    const cloneImg = document.createElement("img");
-    cloneImg.src = sdImg.src;
-    Object.assign(cloneImg.style, { width: "100%", height: "100%", objectFit: "cover", display: "block" });
-    closeFlyEl.appendChild(cloneImg);
-    document.body.appendChild(closeFlyEl);
-    if (sdImg) gsap.set(sdImg, { opacity: 0 });
-  }
-
-  const DUR = 0.45, EASE = "power3.inOut";
-  gsap.to(spotDetail, { scale: 0, opacity: 0, duration: DUR, ease: EASE });
-  gsap.to(sdOverlay, {
-    opacity: 0, duration: DUR, ease: "power2.in",
-    onComplete: () => {
-      gsap.set(spotDetailOuter, { display: "none", pointerEvents: "none" });
-      gsap.set(spotDetail, { scale: 1, opacity: 1 });
-      if (sdImg) gsap.set(sdImg, { opacity: 1 });
-      detailOpen  = false;
-      detailIndex = -1;
-      // Reset snap state — keep snapping suppressed briefly after lenis.start()
-      // so the scroll event lenis emits on resume doesn't trigger a spurious snap
-      clearTimeout(spotSnapTimer);
-      spotIsSnapping = true;
-      lenis.start();
-      setTimeout(() => { spotIsSnapping = false; }, 350);
-    },
-  });
-
-  if (closeFlyEl && tgtRect) {
-    gsap.to(closeFlyEl, {
-      x: tgtRect.left, y: tgtRect.top,
-      width: tgtRect.width, height: tgtRect.height,
-      duration: DUR, ease: EASE,
-      onComplete: () => {
-        if (srcImg) gsap.set(srcImg, { opacity: 1 });
-        closeFlyEl.remove();
-      },
-    });
-  } else if (srcImg) {
-    setTimeout(() => gsap.set(srcImg, { opacity: 1 }), DUR * 1000 + 50);
-  }
-}
-
-// ─── Close triggers ───────────────────────────────────────────────────────────
-document.addEventListener("keydown",    (e) => { if (e.key === "Escape" && detailOpen) closeDetail(); });
-document.addEventListener("wheel",      ()  => { if (detailOpen) closeDetail(); }, { passive: true });
-document.addEventListener("touchstart", (e) => {
-  if (detailOpen && !spotDetail?.contains(e.target)) closeDetail();
-}, { passive: true });
-if (sdClose)   sdClose.addEventListener("click", closeDetail);
-if (sdOverlay) sdOverlay.addEventListener("click", closeDetail); // click outside panel
-
-// ─── CTA arrow animation ──────────────────────────────────────────────────────
-if (sdCta && sdCtaArrow) {
-  const animateArrow = () => {
-    gsap.killTweensOf(sdCtaArrow);
-    gsap.to(sdCtaArrow, {
-      x: 36, opacity: 0, duration: 0.22, ease: "power2.in",
-      onComplete: () => {
-        gsap.fromTo(sdCtaArrow,
-          { x: -36, opacity: 0 },
-          { x: 0,   opacity: 1, duration: 0.22, ease: "power2.out" }
-        );
-      },
-    });
-  };
-  sdCta.addEventListener("mouseenter", animateArrow);
-  sdCta.addEventListener("mouseleave", animateArrow);
-}
+// ─── Module-scope state ───────────────────────────────────────────────────────
+let spST        = null;   // spotlight ScrollTrigger instance
+let openCardIdx = -1;     // index of currently open side panel (-1 = closed)
 
 // ─── window.load ─────────────────────────────────────────────────────────────
 window.addEventListener("load", () => {
@@ -258,14 +68,7 @@ window.addEventListener("load", () => {
   if (heroBadge) {
     heroBadge.addEventListener("click", () => {
       const locationEl = document.getElementById("location");
-      if (locationEl) {
-        navScrolling = true;
-        lenis.scrollTo(locationEl, {
-          duration: 1.4,
-          easing: (t) => 1 - Math.pow(1 - t, 4),
-          onComplete: () => { navScrolling = false; },
-        });
-      }
+      if (locationEl) lenis.scrollTo(locationEl, { duration: 1.4, easing: (t) => 1 - Math.pow(1 - t, 4) });
     });
   }
 
@@ -300,17 +103,6 @@ window.addEventListener("load", () => {
       const prevItem = labelItems[prevIndex];
       const nextItem = labelItems[newIndex];
 
-      // Show/hide filter based on whether we're in spotlight (index 1)
-      if (spotFilter) {
-        if (newIndex === 1) {
-          gsap.set(spotFilter, { pointerEvents: "auto" });
-          gsap.to(spotFilter, { opacity: 1, duration: 0.4, ease: "power2.out" });
-        } else {
-          gsap.to(spotFilter, { opacity: 0, duration: 0.25, ease: "power2.in",
-            onComplete() { gsap.set(spotFilter, { pointerEvents: "none" }); } });
-        }
-      }
-
       gsap.set(nextItem, { display: "flex", y: "100%", opacity: 1 });
       gsap.to(prevItem, {
         y: "-100%", opacity: 0, duration: 0.42, ease: "power3.in",
@@ -337,79 +129,12 @@ window.addEventListener("load", () => {
     });
   }
 
-  // ─── Desktop nav: progress fill + active state ──────────────────────────
-  {
-    const navEntries = [
-      { sectionId: "intro",     linkIdx: 0 },
-      { sectionId: "spotlight", linkIdx: 1 },
-      { sectionId: "location",  linkIdx: 2 },
-      { sectionId: "contact",   linkIdx: 3 },
-    ];
-    const allNavLinks = document.querySelectorAll("#siteHeader .site-nav-link");
-
-    // build lookup: link element → its .sn-bar-fill child
-    const fills = Array.from(allNavLinks).map(l => l.querySelector(".sn-bar-fill"));
-
-    function tickNavProgress() {
-      const sy = lenis.scroll;
-
-      navEntries.forEach(({ sectionId, linkIdx }, i) => {
-        const section  = document.getElementById(sectionId);
-        const nextId   = navEntries[i + 1]?.sectionId ?? "footer";
-        const nextSec  = document.getElementById(nextId);
-        if (!section) return;
-
-        const top     = section.offsetTop;
-        const nextTop = nextSec ? nextSec.offsetTop : document.body.scrollHeight;
-        const range   = nextTop - top;
-
-        const active  = sy >= top && sy < nextTop;
-        const pct     = active ? Math.min(100, Math.max(0, (sy - top) / range * 100)) : 0;
-
-        if (fills[linkIdx]) fills[linkIdx].style.width = pct + "%";
-        allNavLinks[linkIdx]?.classList.toggle("sn-active", active);
-      });
-
-      // back at the very top → restore home bar to full
-      if (sy < 5) {
-        if (fills[0]) fills[0].style.width = "100%";
-        allNavLinks[0]?.classList.add("sn-active");
-      }
-    }
-
-    // home section is active on load — set full immediately
-    if (fills[0]) fills[0].style.width = "100%";
-    allNavLinks[0]?.classList.add("sn-active");
-
-    lenis.on("scroll", tickNavProgress);
-  }
-
-  // ─── Desktop nav: smooth scroll ─────────────────────────────────────────
-  document.querySelectorAll("#siteHeader a[href^='#']").forEach(link => {
-    link.addEventListener("click", e => {
-      e.preventDefault();
-      const href   = link.getAttribute("href");
-      const target = document.querySelector(href);
-      if (target) {
-        navScrolling = true;
-        // For the pinned spotlight section use spST.start directly — element-based
-        // scrollTo gives wrong results when navigating from below the pin range.
-        const dest = (href === "#spotlight" && spST) ? spST.start : target;
-        lenis.scrollTo(dest, {
-          duration: 1.2,
-          easing: t => 1 - Math.pow(1 - t, 4),
-          onComplete: () => { navScrolling = false; },
-        });
-      }
-    });
-  });
-
   // ─── Spotlight ─────────────────────────────────────────────────────────
   const spotlightSection = document.querySelector(".spotlight");
 
   if (spotlightSection) {
     const projectIndex           = spotlightSection.querySelector(".project-index h2");
-    projectImgs                  = spotlightSection.querySelectorAll(".project-img");
+    const projectImgs            = spotlightSection.querySelectorAll(".project-img");
     const projectImagesContainer = spotlightSection.querySelector(".project-images");
     const projectNameItems       = spotlightSection.querySelectorAll(".project-name-item");
     const connector              = spotlightSection.querySelector(".project-connector");
@@ -422,9 +147,8 @@ window.addEventListener("load", () => {
       const VH  = window.innerHeight;
       const mid = VH / 2;
 
-      spImagesContainer = projectImagesContainer;
-      const imgsH  = projectImagesContainer.offsetHeight;
-      moveDistImages = VH - imgsH;
+      const imgsH        = projectImagesContainer.offsetHeight;
+      const moveDistImages = VH - imgsH;
 
       const firstImg     = projectImgs[0];
       const firstDivider = spotlightSection.querySelector(".project-divider");
@@ -467,7 +191,15 @@ window.addEventListener("load", () => {
 
       gsap.set(projectNameItems, { top: SLOTS.PARK, opacity: 0, yPercent: -50 });
       gsap.set(projectIndex,     { opacity: 0 });
+      projectIndex.textContent = eventData[0]?.date ?? "01.01.26";
       if (connector) gsap.set(connector, { display: "none", opacity: 0 });
+
+      // ─── Linker Connector (Datum ↔ Bild) ─────────────────────────────────
+      const connectorLeft = document.createElement("div");
+      connectorLeft.className = "project-connector";
+      spotlightSection.appendChild(connectorLeft);
+      connectorLeft.innerHTML = `<div class="project-connector-line" style="order:1;"></div><div class="project-connector-dot" style="order:2;"></div>`;
+      gsap.set(connectorLeft, { display: "none", opacity: 0 });
 
       // ─── Divider-Titel ───────────────────────────────────────────────────
       const projectTitles = Array.from(projectNameItems).map(item => {
@@ -528,18 +260,29 @@ window.addEventListener("load", () => {
         const changed  = (displayN !== lastDisplayN);
         lastDisplayN   = displayN;
 
+        // While a card is open: don't start slot animations (would abort slide-out)
+        if (openCardIdx !== -1) return;
+
+        if (changed) {
+          gsap.to(projectIndex, { opacity: 0, duration: 0.12, ease: "power2.in", onComplete: () => {
+            projectIndex.textContent = eventData[displayN]?.date ?? `${String(displayN + 1).padStart(2, "0")}.01.26`;
+            gsap.to(projectIndex, { opacity: 1, duration: 0.2, ease: "power2.out" });
+          }});
+        }
+
         projectNameItems.forEach((item, i) => {
-          const slot     = getSlot(i, displayN);
-          const dest     = SLOTS[slot];
-          const alpha    = SLOT_OPACITY[slot];
-          const color    = SLOT_COLOR[slot];
-          const numColor = slot === "CENTER" ? "rgba(255,255,255,0.50)" : "rgba(255,255,255,0.15)";
+          const slot        = getSlot(i, displayN);
+          const dest        = SLOTS[slot];
+          const filteredOut = window._activeLocFilter && window._activeLocFilter !== "ALL" && item.dataset.location !== window._activeLocFilter;
+          const alpha       = filteredOut ? 0.05 : SLOT_OPACITY[slot];
+          const color       = filteredOut ? "rgba(255,255,255,0.07)" : SLOT_COLOR[slot];
+          const numColor    = (slot === "CENTER" && !filteredOut) ? "rgba(255,255,255,0.50)" : "rgba(255,255,255,0.08)";
 
           gsap.killTweensOf(item);
           if (changed) {
-            gsap.to(item, { top: dest, opacity: alpha, yPercent: -50, duration: 0.22, ease: "power4.inOut" });
+            gsap.to(item, { top: dest, opacity: alpha, yPercent: -50, x: 0, duration: 0.22, ease: "power4.inOut" });
           } else {
-            gsap.set(item, { top: dest, opacity: alpha, yPercent: -50 });
+            gsap.set(item, { top: dest, opacity: alpha, yPercent: -50, x: 0 });
           }
 
           const textEl = item.querySelector("p");
@@ -565,8 +308,6 @@ window.addEventListener("load", () => {
         pin: true,
         pinSpacing: true,
         onUpdate: (self) => {
-          if (detailOpen) return;
-
           const progress  = self.progress;
           const scrollDir = self.direction;
 
@@ -578,28 +319,21 @@ window.addEventListener("load", () => {
           let N = 0;
           for (let i = totalProjectCount - 1; i >= 0; i--) {
             const r = projectImgs[i].getBoundingClientRect();
-            const city = projectImgs[i].dataset.city;
-            const filtered = activeFilterCity && city !== activeFilterCity;
-            if (!filtered && r.top <= mid) { N = i; break; }
+            if (r.top <= mid) { N = i; break; }
           }
 
           projectImgs.forEach((img) => {
             const r = img.getBoundingClientRect();
-            const city = img.dataset.city;
-            const filtered = activeFilterCity && city !== activeFilterCity;
-            if (filtered) {
-              gsap.set(img, { pointerEvents: "none" });
-            } else {
-              gsap.set(img, { opacity: (r.top <= mid && r.bottom >= mid) ? 1 : 0.35, pointerEvents: "auto" });
-            }
+            const filteredOut = window._activeLocFilter && window._activeLocFilter !== "ALL" && img.dataset.location !== window._activeLocFilter;
+            const zone = VH * 0.28;
+            const isCenter = r.top <= mid + zone && r.bottom >= mid - zone;
+            gsap.set(img, { opacity: filteredOut ? 0.06 : (isCenter ? 1 : 0.35) });
           });
 
           applySlots(N);
-          const stableN = (N >= 0 && N < totalProjectCount) ? N : lastValidN;
-          projectIndex.textContent = `${String(stableN + 1).padStart(2, "0")}.01.26`;
           updateDividerTitles(N, scrollDir);
 
-          if (connector) {
+          if (connector && openCardIdx === -1) {
             const activeImg = Array.from(projectImgs).find(img => {
               const r = img.getBoundingClientRect();
               return r.top <= mid && r.bottom >= mid;
@@ -609,14 +343,27 @@ window.addEventListener("load", () => {
             if (activeImg && cItem && N >= 0 && N < totalProjectCount) {
               const imgR  = activeImg.getBoundingClientRect();
               const itemR = cItem.getBoundingClientRect();
-              const lineX = imgR.right + 10;
-              const lineW = Math.max(0, itemR.left - lineX - 10);
+              const idxR  = projectIndex.getBoundingClientRect();
+
+              const lineX  = imgR.right + 10;
+              const lineW  = Math.max(0, itemR.left - lineX - 10);
+              const rightY = itemR.top + itemR.height / 2;
               gsap.set(connector, {
-                display: "flex", left: lineX, top: SLOTS.CENTER,
+                display: "flex", left: lineX, top: rightY,
                 width: lineW, opacity: dateOpacity > 0.15 ? 0.5 : 0,
               });
+
+              const leftLineEnd   = imgR.left - 10;
+              const leftLineStart = idxR.right + 10;
+              const leftLineW     = Math.max(0, leftLineEnd - leftLineStart);
+              const leftY         = idxR.top + idxR.height / 2;
+              gsap.set(connectorLeft, {
+                display: "flex", left: leftLineStart, top: leftY,
+                width: leftLineW, opacity: dateOpacity > 0.15 ? 0.5 : 0,
+              });
             } else {
-              gsap.set(connector, { opacity: 0 });
+              gsap.set(connector,     { opacity: 0 });
+              gsap.set(connectorLeft, { opacity: 0 });
             }
           }
         },
@@ -624,141 +371,187 @@ window.addEventListener("load", () => {
 
       ScrollTrigger.refresh();
 
-      // ─── Click on any image → snap if needed, then open detail ─────────
-      projectImgs.forEach((imgEl, i) => {
-        imgEl.style.cursor = "pointer";
-        imgEl.addEventListener("click", () => {
-          if (detailOpen || spotIsSnapping) return;
-          const r = imgEl.getBoundingClientRect();
-          const imgCenter = r.top + r.height / 2;
-          const dist = Math.abs(imgCenter - mid);
-
-          if (dist < imgH * 0.45) {
-            // Already centered — open immediately
-            openDetail(i);
-          } else {
-            // Off-center — snap to it, then open detail
-            const screenDelta  = imgCenter - mid;
-            const scrollAdjust = -screenDelta * (VH * 5) / moveDistImages;
-            spotIsSnapping = true;
-            const snapFailsafe = setTimeout(() => { spotIsSnapping = false; }, 1000);
-            lenis.scrollTo(lenis.scroll + scrollAdjust, {
-              duration: 0.52,
-              easing: t => 1 - Math.pow(1 - t, 4),
-              onComplete: () => {
-                clearTimeout(snapFailsafe);
-                spotIsSnapping = false;
-                openDetail(i);
-              },
-            });
-          }
-        });
-      });
-
-      // ─── Spotlight Snap ──────────────────────────────────────────────────
-      lenis.on("scroll", () => {
-        hideSnapHint();
-
-        if (!spST || spST.progress <= 0.005 || spST.progress >= 0.998) return;
-        if (spotIsSnapping || detailOpen || navScrolling) return;
-
-        clearTimeout(spotSnapTimer);
-        spotSnapTimer = setTimeout(() => {
-          if (detailOpen) return;
-          if (!spST || spST.progress <= 0.005 || spST.progress >= 0.998) return;
-
-          let bestI = 0, bestDist = Infinity;
-          projectImgs.forEach((img, i) => {
-            if (activeFilterCity && img.dataset.city !== activeFilterCity) return;
-            const r      = img.getBoundingClientRect();
-            const center = r.top + r.height / 2;
-            const dist   = Math.abs(center - mid);
-            if (dist < bestDist) { bestDist = dist; bestI = i; }
-          });
-
-          const r             = projectImgs[bestI].getBoundingClientRect();
-          const currentCenter = r.top + r.height / 2;
-          const screenDelta   = currentCenter - mid;
-
-          if (Math.abs(screenDelta) < 3) {
-            showSnapHint();
-            return;
-          }
-
-          spotIsSnapping = true;
-
-          // Failsafe: reset spotIsSnapping after max duration + buffer
-          const snapFailsafe = setTimeout(() => { spotIsSnapping = false; }, 1000);
-
-          const scrollAdjust = -screenDelta * (VH * 5) / moveDistImages;
-          lenis.scrollTo(lenis.scroll + scrollAdjust, {
-            duration: 0.62,
-            easing: (t) => 1 - Math.pow(1 - t, 4),
-            onComplete: () => {
-              clearTimeout(snapFailsafe);
-              spotIsSnapping = false;
-              showSnapHint();
-            },
-          });
-        }, 90);
-      });
     }
   }
 
-  // ─── Spotlight Filter ────────────────────────────────────────────────────
-  {
-    const filterBtns = document.querySelectorAll(".sf-btn");
+  // ─── Side Panel ──────────────────────────────────────────────────────────
+  const espPanel   = document.getElementById("eventSidePanel");
+  const espContent = document.getElementById("espContent");
+  const espClose   = document.getElementById("espClose");
+  const espBdrop   = document.getElementById("espBackdrop");
 
-    // Visually regroup visible items via y-translation so container height
-    // (and therefore scroll speed) never changes.
-    function applyFilterOffsets() {
-      if (!projectImgs) return;
-      let cumY = 0;
-      projectImgs.forEach(img => {
-        const divider    = img.nextElementSibling?.classList.contains("project-divider")
-          ? img.nextElementSibling : null;
-        const isFiltered = activeFilterCity && img.dataset.city !== activeFilterCity;
-        // offsetHeight ignores transforms → always the natural DOM height
-        const imgH = img.offsetHeight;
-        const divH = divider ? divider.offsetHeight : 0;
+  function buildPanelContent(idx) {
+    const ev = eventData[idx];
+    if (!ev) return "";
+    const num        = String(idx + 1).padStart(2, "0");
+    const imgSrc     = document.querySelector(`.project-img[data-index="${idx}"] img`)?.src || "";
+    const dateParts  = ev.date.split(".");
+    const dateDisplay = dateParts.length === 3
+      ? `${dateParts[0]} — ${dateParts[1]} — ${dateParts[2]}`
+      : ev.date;
+    const ticketBtn = ev.hasTicket
+      ? `<a href="${ev.ticketUrl}" class="esp-ticket" target="_blank"><span>Tickets anfragen</span><span class="esp-ticket-arrow">↗</span></a>`
+      : "";
+    return `
+      <img src="${imgSrc}" class="esp-bg-img" alt="" aria-hidden="true" />
+      <div class="esp-left">
+        <div class="esp-vline" aria-hidden="true"></div>
+        <p class="esp-num">${num} — ${ev.category}</p>
+        <p class="esp-artist">${ev.artist}</p>
+        <h2 class="esp-title">${ev.title}</h2>
+        <div class="esp-rule"><span class="esp-rule-dot"></span><span class="esp-rule-line"></span><span class="esp-rule-dot"></span></div>
+        <div class="esp-date">${dateDisplay}</div>
+        <div class="esp-location">
+          <span class="esp-loc-label">Location</span>
+          <span class="esp-loc-val">${ev.location}</span>
+        </div>
+        <p class="esp-desc">${ev.desc}</p>
+        <div class="esp-actions">
+          ${ticketBtn}
+          <a href="/anfrage.html" class="esp-info">↗ weitere Infos</a>
+        </div>
+      </div>`;
+  }
 
-        if (isFiltered) {
-          // Slide behind previously-visible items and fade out
-          gsap.to(img,    { y: -cumY, opacity: 0, pointerEvents: "none", duration: 0.45, ease: "power2.inOut" });
-          if (divider) gsap.to(divider, { y: -cumY, opacity: 0, duration: 0.45, ease: "power2.inOut" });
-          cumY += imgH + divH;
-        } else {
-          // Close the gap left by filtered items above
-          gsap.to(img,    { y: -cumY, pointerEvents: "auto", duration: 0.45, ease: "power2.inOut" });
-          if (divider) gsap.to(divider, { y: -cumY, duration: 0.45, ease: "power2.inOut" });
-          // Opacity is intentionally left to onUpdate (active/inactive logic)
-        }
-      });
+  function openCard(idx) {
+    if (openCardIdx === idx) return;
+    openCardIdx = idx;
+    espContent.innerHTML = buildPanelContent(idx);
+    espPanel.setAttribute("aria-hidden", "false");
+    gsap.set(espPanel, { x: "100%" });
+    gsap.to(espPanel, { x: "0%", duration: 0.38, ease: "expo.out" });
+    gsap.to(espBdrop, { opacity: 1, duration: 0.25, ease: "power2.out", pointerEvents: "all" });
+    gsap.fromTo(espContent.querySelector(".esp-bg-img"),
+      { opacity: 0 }, { opacity: 1, duration: 0.8, ease: "power2.out", delay: 0.05 }
+    );
+    const els = espContent.querySelectorAll(".esp-num, .esp-artist, .esp-title, .esp-rule, .esp-date, .esp-location, .esp-desc, .esp-actions");
+    gsap.fromTo(els,
+      { opacity: 0, y: 12 },
+      { opacity: 1, y: 0, duration: 0.26, stagger: 0.045, ease: "power2.out", delay: 0.18 }
+    );
+    document.querySelectorAll(".project-name-item").forEach(item =>
+      gsap.to(item, { opacity: 0, x: 28, duration: 0.22, ease: "power2.in" })
+    );
+    const projectIndexEl = document.querySelector(".project-index");
+    if (projectIndexEl) gsap.to(projectIndexEl, { opacity: 0, x: -28, duration: 0.22, ease: "power2.in" });
+    document.querySelectorAll(".project-connector").forEach(c => gsap.to(c, { opacity: 0, duration: 0.15 }));
+  }
+
+  function closeCard(animate = true) {
+    if (openCardIdx === -1) return;
+    openCardIdx = -1;
+    espPanel.setAttribute("aria-hidden", "true");
+    if (animate) {
+      gsap.to(espPanel, { x: "100%", duration: 0.28, ease: "expo.in" });
+      gsap.to(espBdrop, { opacity: 0, duration: 0.2, ease: "power2.in", pointerEvents: "none" });
+    } else {
+      gsap.set(espPanel, { x: "100%" });
+      gsap.set(espBdrop, { opacity: 0, pointerEvents: "none" });
     }
+    document.querySelectorAll(".project-name-item").forEach(item =>
+      gsap.to(item, { opacity: 1, x: 0, duration: 0.35, ease: "power3.out", delay: animate ? 0.1 : 0 })
+    );
+    const projectIndexEl2 = document.querySelector(".project-index");
+    if (projectIndexEl2) gsap.to(projectIndexEl2, { opacity: 1, x: 0, duration: 0.35, ease: "power3.out", delay: animate ? 0.1 : 0 });
+    setTimeout(() => {
+      document.querySelectorAll(".project-connector").forEach(c => gsap.set(c, { clearProps: "opacity" }));
+    }, animate ? 260 : 0);
+  }
 
-    filterBtns.forEach(btn => {
-      btn.addEventListener("click", () => {
-        const rawCity = btn.dataset.city;
-        const city    = rawCity === "all" ? null : rawCity;
+  espClose.addEventListener("click", () => closeCard(true));
+  espBdrop.addEventListener("click", () => closeCard(true));
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && openCardIdx !== -1) closeCard(true); });
 
-        activeFilterCity = (city === null || activeFilterCity === city) ? null : city;
+  // Klick auf Bild öffnet/schließt Panel
+  document.querySelectorAll(".project-img").forEach((imgEl) => {
+    imgEl.style.cursor = "pointer";
+    imgEl.addEventListener("click", () => {
+      const idx = parseInt(imgEl.dataset.index, 10);
+      if (openCardIdx === idx) closeCard(true);
+      else openCard(idx);
+    });
+  });
 
-        filterBtns.forEach(b => {
-          const bCity = b.dataset.city === "all" ? null : b.dataset.city;
-          b.classList.toggle("sf-active", bCity === activeFilterCity);
-        });
+  // Klick auf Titel-Item öffnet Panel
+  document.querySelectorAll(".project-name-item").forEach((item) => {
+    item.style.cursor = "pointer";
+    item.addEventListener("click", () => {
+      const idx = parseInt(item.dataset.index, 10);
+      if (openCardIdx === idx) closeCard(true);
+      else openCard(idx);
+    });
+  });
 
-        applyFilterOffsets();
+  // ─── Info-Button rechts ───────────────────────────────────────────────────
+  const infoBtn = document.getElementById("eventInfoBtn");
+  let currentActiveIdx = 0;
 
-        document.querySelectorAll(".project-name-item").forEach(item => {
-          const hide = activeFilterCity && item.dataset.city !== activeFilterCity;
-          gsap.to(item, { opacity: hide ? 0 : 1, duration: 0.3, ease: "power2.inOut" });
-        });
-
-        if (spST) spST.update();
-      });
+  if (infoBtn) {
+    infoBtn.addEventListener("click", () => {
+      if (openCardIdx === currentActiveIdx) closeCard(true);
+      else openCard(currentActiveIdx);
     });
   }
+
+  // ─── Filter Bar ───────────────────────────────────────────────────────────
+  const filterBar   = document.getElementById("eventFilter");
+  const filterItems = filterBar.querySelectorAll(".ef-item");
+  const indicator   = filterBar.querySelector(".ef-indicator");
+
+  function moveIndicator(activeEl) {
+    if (!indicator || !activeEl) return;
+    const trackRect  = filterBar.querySelector(".ef-track").getBoundingClientRect();
+    const activeRect = activeEl.getBoundingClientRect();
+    indicator.style.top    = (activeRect.top - trackRect.top) + "px";
+    indicator.style.height = activeRect.height + "px";
+  }
+
+  moveIndicator(filterBar.querySelector(".ef-item.active"));
+
+  filterItems.forEach((item) => {
+    item.addEventListener("click", () => {
+      const loc = item.dataset.filter;
+      window._activeLocFilter = loc === "all" ? "ALL" : loc;
+      filterItems.forEach(i => i.classList.remove("active"));
+      item.classList.add("active");
+      moveIndicator(item);
+      document.querySelectorAll(".project-img[data-location]").forEach((img) => {
+        const match = loc === "all" || img.dataset.location === loc;
+        gsap.to(img, { opacity: match ? 0.35 : 0.06, duration: 0.35, ease: "power2.out" });
+      });
+      document.querySelectorAll(".project-name-item[data-location]").forEach((el) => {
+        const match  = loc === "all" || el.dataset.location === loc;
+        const textEl = el.querySelector("p");
+        const numEl  = el.querySelector(".proj-num");
+        if (textEl) gsap.to(textEl, { color: match ? null : "rgba(255,255,255,0.07)", duration: 0.35 });
+        if (numEl)  gsap.to(numEl,  { color: match ? null : "rgba(255,255,255,0.07)", duration: 0.35 });
+      });
+    });
+  });
+
+  // Filter + Info-Button visibility via ScrollTrigger
+  ScrollTrigger.create({
+    trigger: ".spotlight",
+    start: "top top",
+    end: `+=${window.innerHeight * 5}px`,
+    onEnter:     () => { filterBar.classList.add("visible"); if (infoBtn) infoBtn.classList.add("visible"); },
+    onLeave:     () => { filterBar.classList.remove("visible"); if (infoBtn) infoBtn.classList.remove("visible"); },
+    onEnterBack: () => { filterBar.classList.add("visible"); if (infoBtn) infoBtn.classList.add("visible"); },
+    onLeaveBack: () => { filterBar.classList.remove("visible"); if (infoBtn) infoBtn.classList.remove("visible"); },
+  });
+
+  // currentActiveIdx für Info-Button synchron halten
+  lenis.on("scroll", () => {
+    const vh2 = window.innerHeight / 2;
+    document.querySelectorAll(".project-img").forEach((img) => {
+      const r = img.getBoundingClientRect();
+      if (r.top <= vh2 && r.bottom >= vh2) {
+        currentActiveIdx = parseInt(img.dataset.index, 10);
+      }
+    });
+  });
+
+  window._activeLocFilter = "ALL";
 
   // ─── Location Floor Plan ────────────────────────────────────────────────
   {
@@ -906,19 +699,16 @@ window.addEventListener("load", () => {
     }
   }
 
-  // ─── Section Snap (alle außer Spotlight) ───────────────────────────────
-  const snapSections = Array.from(document.querySelectorAll(".snap-section:not(.spotlight):not(.location)"));
+  // ─── Section Snap ────────────────────────────────────────────────────────
+  const snapSections = Array.from(document.querySelectorAll(".snap-section"));
   let snapTimer  = null;
   let isSnapping = false;
 
   lenis.on("scroll", () => {
-    if (isSnapping || spotIsSnapping || detailOpen) return;
-    if (spST && spST.isActive) return;
+    if (isSnapping) return;
     clearTimeout(snapTimer);
     snapTimer = setTimeout(() => {
-      if (spotIsSnapping || detailOpen) return;
-      if (spST && spST.isActive) return;
-      const threshold = window.innerHeight * 0.25;
+      const threshold = window.innerHeight * 0.20;
       let snapTarget = null, minDist = Infinity;
       snapSections.forEach((section) => {
         const rect = section.getBoundingClientRect();
@@ -927,12 +717,14 @@ window.addEventListener("load", () => {
       });
       if (snapTarget && minDist > 2) {
         isSnapping = true;
-        lenis.scrollTo(snapTarget, {
-          duration: 0.8, easing: (t) => 1 - Math.pow(1 - t, 4),
+        const exactTop = snapTarget.getBoundingClientRect().top + window.scrollY;
+        lenis.scrollTo(exactTop, {
+          duration: 0.55,
+          easing: (t) => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2,
           onComplete: () => { isSnapping = false; },
         });
       }
-    }, 120);
+    }, 80);
   });
 
   // ─── Navbar (overlay – tablet / mobile) ────────────────────────────────
@@ -1010,82 +802,25 @@ window.addEventListener("load", () => {
         if (!target) return;
         closeNav();
         setTimeout(() => {
-          navScrolling = true;
           const dest = (href === "#spotlight" && spST) ? spST.start : target;
-          lenis.scrollTo(dest, {
-            duration: 1.2,
-            easing: (t) => 1 - Math.pow(1 - t, 4),
-            onComplete: () => { navScrolling = false; },
-          });
+          lenis.scrollTo(dest, { duration: 1.2, easing: (t) => 1 - Math.pow(1 - t, 4) });
         }, 650);
       });
     });
   }
 
-  // ─── Custom Cursor (nur mit Maus) ──────────────────────────────────────
-  const hasHover = window.matchMedia("(hover: hover)").matches;
-  if (hasHover) {
-    const cursor = document.createElement("div");
-    cursor.id = "cursor";
+  // ─── Custom Cursor ────────────────────────────────────────────────────────
+  const cursor = document.createElement("div");
+  cursor.id = "cursor";
+  document.body.appendChild(cursor);
 
-    // Label for "DETAILS" inside the cursor circle (project images)
-    const cursorLabel = document.createElement("span");
-    cursorLabel.id = "cursorLabel";
-    cursorLabel.textContent = "DETAILS";
-    cursor.appendChild(cursorLabel);
-    document.body.appendChild(cursor);
+  window.addEventListener("mousemove", (e) => {
+    gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.15, ease: "power2.out" });
+  });
 
-    // Start label invisible and pre-scaled inverse of the hover scale (8)
-    gsap.set(cursorLabel, { scale: 0.125, opacity: 0 });
-
-    window.addEventListener("mousemove", (e) => {
-      gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.15, ease: "power2.out" });
-    });
-
-    // Generic interactive elements — normal scale-up
-    document.querySelectorAll("a, button, .navH, .hero-badge").forEach((el) => {
-      el.addEventListener("mouseenter", () => gsap.to(cursor, { scale: 3.5, duration: 0.3, ease: "power2.out" }));
-      el.addEventListener("mouseleave", () => gsap.to(cursor, { scale: 1,   duration: 0.3, ease: "power2.out" }));
-    });
-
-    // Project images — large circle with "DETAILS" label
-    document.querySelectorAll(".project-img").forEach((el) => {
-      el.addEventListener("mouseenter", () => {
-        cursor.classList.add("cursor-detail");
-        gsap.killTweensOf(cursorLabel);
-        gsap.to(cursor,      { scale: 8,   duration: 0.4, ease: "power2.out" });
-        gsap.to(cursorLabel, { opacity: 1, duration: 0.2, delay: 0.18, ease: "power2.out" });
-      });
-      el.addEventListener("mouseleave", () => {
-        cursor.classList.remove("cursor-detail");
-        gsap.killTweensOf(cursorLabel); // kill queued delayed opacity:1 before fading out
-        gsap.to(cursorLabel, { opacity: 0, duration: 0.12, ease: "power2.in" });
-        gsap.to(cursor,      { scale: 1,   duration: 0.3,  ease: "power2.out" });
-      });
-    });
-  }
-
-  // ─── Contact tabs ───────────────────────────────────────────────────────
-  {
-    const ctTabs = document.querySelectorAll(".ct-tab");
-
-    ctTabs.forEach(tab => {
-      tab.querySelector(".ct-tab-head").addEventListener("click", () => {
-        ctTabs.forEach(t => t.classList.remove("ct-active"));
-        tab.classList.add("ct-active");
-      });
-    });
-
-    document.querySelectorAll(".ct-form").forEach(form => {
-      form.addEventListener("submit", e => {
-        e.preventDefault();
-        const entries = Array.from(new FormData(form).entries());
-        const body = entries.map(([k, v]) => `${k}: ${v}`).join("\n");
-        const subject = form.dataset.subject || "Anfrage DOCK50";
-        window.location.href =
-          `mailto:info@dock50.de?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-      });
-    });
-  }
+  document.querySelectorAll("a, button, .navH, .project-name-item, .project-divider, .hero-badge, .project-index").forEach((el) => {
+    el.addEventListener("mouseenter", () => gsap.to(cursor, { scale: 3.5, duration: 0.3, ease: "power2.out" }));
+    el.addEventListener("mouseleave", () => gsap.to(cursor, { scale: 1,   duration: 0.3, ease: "power2.out" }));
+  });
 
 }); // end window.load
