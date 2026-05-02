@@ -453,198 +453,384 @@ section {
   display: flex;
   flex-direction: column;
   padding: 0;
-  height: auto;
-  overflow: visible; /* sticky inside needs no overflow:hidden on ancestor */
+  height: 100vh;
 }
 
-.loc-main {
-  display: flex;
-  align-items: flex-end;
-  gap: 5vw;
-  padding-bottom: 6vh;
+.location::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-top: 8vh solid #000;
+  border-bottom: 8vh solid #000;
+  border-left: 1.5vw solid #000;
+  border-right: 1.5vw solid #000;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.locationTop {
   width: 100%;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Black right third — permanent, above all panels */
+.lt-shade {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 36%;
+  height: 100%;
+  background: #000;
+  z-index: 6;
+  pointer-events: none;
+}
+
+/* Subtle grid overlay */
+.locationTop::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+.lt-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.lt-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: brightness(0.55);
+}
+
+.lt-info {
+  position: absolute;
+  top: 15%;
+  right: 5%;
+  width: 30%;
+  height: 70%;
+  font-family: var(--font-paragraph);
+  font-size: clamp(1.7rem, 2.2vw, 2.2rem);
+  line-height: 1.9;
+  letter-spacing: 0.06em;
+  display: flex;
+  align-items: center;
+  padding: 2rem 2.2rem;
+  z-index: 7;
+  box-sizing: border-box;
+}
+
+/* Left deck button */
+.lt-deck-btn {
+  position: absolute;
+  bottom: 15%;
+  left: 5%;
+  width: 26%;
+  height: 17.5%;
+  z-index: 7;
+  box-sizing: border-box;
+  border: 1px solid rgba(255,255,255,0.42);
+  background: #fff;
+  color: #000;
+  font-family: var(--font-paragraph);
+  font-size: clamp(1rem, 1.4vw, 1.5rem);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  overflow: hidden;
+  transition: color 0.55s cubic-bezier(0.76, 0, 0.24, 1);
+  border-radius: 0 32px 0 32px;
+}
+
+.lt-deck-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url('/deck1.jpg') center / cover no-repeat;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.lt-deck-btn:hover {
+  color: #fff;
+}
+
+.lt-deck-btn:hover::before {
+  opacity: 1;
+}
+
+.lt-deck-btn span,
+.lt-d1-back span {
   position: relative;
   z-index: 1;
-  padding: 0 4rem 0 3rem;
-  min-height: 100svh;
 }
 
-.loc-left {
-  flex: 0 0 58%;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+.lt-btn-arrow {
+  position: relative;
+  z-index: 1;
+  transition: transform 0.3s ease;
 }
 
-.loc-eyebrow {
-  font-family: var(--font-paragraph);
-  font-size: 0.75rem;
-  letter-spacing: 0.24em;
-  color: rgba(255,255,255,0.60);
-  text-transform: uppercase;
+.lt-deck-btn:hover .lt-btn-arrow,
+.lt-d1-back:hover .lt-btn-arrow {
+  transform: translateX(14px);
 }
 
-.loc-svg-container { width: 100%; }
-.loc-svg { width: 100%; height: auto; display: block; }
-
-/* SVG room styles */
-.loc-room-fill {
-  fill: rgba(255,255,255,0.05);
-  stroke: rgba(255,255,255,0.18);
-  stroke-width: 0.7;
-  transition: fill 0.22s ease;
-}
-.loc-room-label {
-  fill: rgba(255,255,255,0.55);
-  font-size: 8.5px;
-  letter-spacing: 1.4px;
-  pointer-events: none;
-  transition: fill 0.22s ease;
-  font-family: var(--font-paragraph);
-}
-.loc-room-sub {
-  fill: rgba(255,255,255,0.35);
-  font-size: 7px;
-  letter-spacing: 0.8px;
-  pointer-events: none;
-  font-family: var(--font-paragraph);
-  transition: fill 0.22s ease;
-}
-.loc-room-group { cursor: crosshair; }
-.loc-room-group:hover .loc-room-fill  { fill: var(--accent-teal); }
-.loc-room-group:hover .loc-room-label { fill: rgba(20,20,20,0.90); }
-.loc-room-group:hover .loc-room-sub   { fill: rgba(20,20,20,0.55); }
-
-/* Building outline & industrial annotation styles */
-.loc-building-outline {
-  fill: none;
-  stroke: rgba(255,255,255,0.24);
-  stroke-width: 1;
-  pointer-events: none;
-}
-.loc-building-inner {
-  fill: none;
-  stroke: rgba(255,255,255,0.07);
-  stroke-width: 0.7;
-  pointer-events: none;
-}
-.loc-dim {
-  stroke: rgba(255,255,255,0.14);
-  stroke-width: 0.6;
-  pointer-events: none;
-}
-.loc-dim-tick {
-  stroke: rgba(255,255,255,0.18);
-  stroke-width: 0.9;
-  pointer-events: none;
-}
-.loc-dim-ext {
-  stroke: rgba(255,255,255,0.07);
-  stroke-width: 0.5;
-  stroke-dasharray: 2 3;
-  pointer-events: none;
-}
-.loc-dim-text {
-  fill: rgba(255,255,255,0.18);
-  font-family: var(--font-paragraph);
-  font-size: 7px;
-  letter-spacing: 0.5px;
-  pointer-events: none;
-}
-.loc-cross {
-  stroke: rgba(255,255,255,0.22);
-  stroke-width: 0.7;
-  fill: none;
-  pointer-events: none;
-}
-
-/* Right data panel */
-.loc-right {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-.loc-data-eyebrow {
-  font-family: var(--font-paragraph);
-  font-size: 0.75rem;
-  letter-spacing: 0.24em;
-  color: rgba(255,255,255,0.60);
-  text-transform: uppercase;
-  margin-bottom: 0.7rem;
-}
-.loc-room-name {
-  font-family: var(--font-header);
-  font-size: clamp(1.2rem, 2vw, 2rem);
-  color: rgba(255,255,255,0.82);
-  letter-spacing: -0.02em;
-  line-height: 1;
-  margin-bottom: 2.2rem;
-  white-space: nowrap;
+/* ─── Skylounge Return Panel ──────────────────────────────────────────── */
+.lt-return-panel {
+  position: absolute;
   overflow: hidden;
-  text-overflow: ellipsis;
+  z-index: 6;
+  display: none;
+  box-sizing: border-box;
 }
-.loc-stats {
+
+.lt-rp-bg {
+  position: absolute;
+  inset: 0;
+}
+
+.lt-rp-bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: brightness(0.55);
+}
+
+/* ─── Deck1 Panel ─────────────────────────────────────────────────────── */
+.lt-deck1-panel {
+  position: absolute;
+  overflow: hidden;
+  z-index: 5;
+  display: none;
+  box-sizing: border-box;
+}
+
+.lt-d1-bg {
+  position: absolute;
+  inset: 0;
+}
+
+.lt-d1-bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: brightness(0.55);
+}
+
+.lt-d1-info {
+  position: absolute;
+  top: 15%;
+  right: 5%;
+  width: 30%;
+  height: 70%;
+  font-family: var(--font-paragraph);
+  font-size: clamp(1.7rem, 2.2vw, 2.2rem);
+  line-height: 1.9;
+  letter-spacing: 0.06em;
+  display: flex;
+  align-items: center;
+  padding: 2rem 2.2rem;
+  z-index: 7;
+  box-sizing: border-box;
+  color: #fff;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.lt-d1-data {
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 26%;
+  height: 70%;
+  z-index: 7;
+  box-sizing: border-box;
+  border: 1px solid rgba(255,255,255,0.42);
+  padding: 1.8rem 1.6rem;
   display: flex;
   flex-direction: column;
+  background: transparent;
+  opacity: 0;
+  pointer-events: none;
 }
-.loc-stat {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 0.9rem 0;
-  border-top: 1px solid rgba(255,255,255,0.08);
-}
-.loc-stat:last-child { border-bottom: 1px solid rgba(255,255,255,0.08); }
-.loc-stat-key {
+
+.lt-d1-back {
+  position: absolute;
+  bottom: 15%;
+  left: 5%;
+  width: 26%;
+  height: 17.5%;
+  z-index: 7;
+  pointer-events: none;
+  box-sizing: border-box;
+  border: 1px solid rgba(255,255,255,0.42);
+  background: #fff;
+  color: #000;
   font-family: var(--font-paragraph);
-  font-size: 0.75rem;
-  color: rgba(255,255,255,0.60);
-  letter-spacing: 0.20em;
+  font-size: clamp(1rem, 1.4vw, 1.5rem);
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  white-space: nowrap;
-}
-.loc-stat-num-row {
+  cursor: pointer;
   display: flex;
-  align-items: baseline;
-  gap: 0.3rem;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  opacity: 0;
+  border-radius: 0 32px 0 32px;
 }
-.loc-stat-val {
+
+.lt-d1-back::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url('/loc-skylounge.jpg') center / cover no-repeat;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.lt-d1-back:hover { color: #fff; }
+.lt-d1-back:hover::before { opacity: 1; }
+
+.lt-d1-back span {
+  position: relative;
+  z-index: 1;
+}
+
+/* Center data box — editorial style */
+.lt-data {
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 26%;
+  height: 70%;
+  z-index: 7;
+  box-sizing: border-box;
+  border: 1px solid rgba(255,255,255,0.42);
+  padding: 1.8rem 1.6rem;
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.lt-data::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #000;
+  transform: scaleY(0);
+  transform-origin: bottom center;
+  transition: transform 0.55s cubic-bezier(0.76, 0, 0.24, 1);
+  z-index: 0;
+}
+
+.lt-data:hover::before {
+  transform: scaleY(1);
+}
+
+.lt-data > * {
+  position: relative;
+  z-index: 1;
+}
+
+.lt-data-title {
   font-family: var(--font-header);
-  font-size: clamp(1.6rem, 2.8vw, 2.6rem);
-  color: rgba(255,255,255,0.90);
-  letter-spacing: -0.03em;
-  line-height: 1;
-  min-width: 2ch;
+  font-size: clamp(2.8rem, 3.8vw, 4.2rem);
+  color: #fff;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  margin-bottom: 1.1rem;
+  flex-shrink: 0;
+}
+
+.lt-data-rule {
+  width: 100%;
+  height: 1px;
+  background: rgba(255,255,255,0.18);
+  margin-bottom: 1rem;
+  flex-shrink: 0;
+}
+
+.lt-data-sub {
+  font-family: var(--font-paragraph);
+  font-size: 1.15rem;
+  color: #fff;
+  line-height: 1.65;
+  letter-spacing: 0.08em;
+  margin-bottom: 1rem;
+  flex-shrink: 0;
+}
+
+.lt-data-list {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: space-between;
+}
+
+.lt-data-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.lt-data-label {
+  font-family: var(--font-paragraph);
+  font-size: 1.5rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.lt-data-val {
+  font-family: var(--font-paragraph);
+  font-size: 1.4rem;
+  letter-spacing: 0.04em;
+  color: #fff;
+}
+
+/* Roman numerals — positioned outside the right edge, aligned with list */
+.lt-data-nums {
+  position: absolute;
+  right: -1.8rem;
+  bottom: 1.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  pointer-events: none;
+}
+
+.lt-data-nums span {
+  font-family: var(--font-paragraph);
+  font-size: 0.60rem;
+  color: rgba(255,255,255,0.35);
+  letter-spacing: 0.08em;
+  line-height: 1.72;
   text-align: right;
 }
-.loc-stat-unit {
-  font-family: var(--font-paragraph);
-  font-size: 0.78rem;
-  color: rgba(255,255,255,0.60);
-  letter-spacing: 0.1em;
-}
-.loc-hint {
-  margin-top: 1.4rem;
-  font-family: var(--font-paragraph);
-  font-size: 0.72rem;
-  color: rgba(255,255,255,0.45);
-  letter-spacing: 0.20em;
-  text-transform: uppercase;
-}
 
-/* ── Mobile: single column (loc-main) ── */
-@media (max-width: 900px) {
-  .loc-main {
-    padding: 2rem;
-    min-height: auto;
-    flex-direction: column;
-    gap: 2rem;
-  }
-  .loc-left { flex: none; width: 100%; }
-  .loc-hint { display: none; }
-}
 
 
 /* ============================================

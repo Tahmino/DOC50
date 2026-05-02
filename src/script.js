@@ -553,84 +553,119 @@ window.addEventListener("load", () => {
 
   window._activeLocFilter = "ALL";
 
-  // ─── Location Floor Plan ────────────────────────────────────────────────
+  // ─── Deck1 Panel ─────────────────────────────────────────────────────────
   {
-    const LOC_DATA = {
-      _default:   { name: "DOCK50 · Gesamtanlage", area: 1200, height: 8.4, cap: 850  },
-      foyer:      { name: "Foyer & Eingang",        area: 180,  height: 4.2, cap: 150  },
-      bar:        { name: "Bar & Lounge",            area: 85,   height: 3.8, cap: 70   },
-      garderobe:  { name: "Garderobe",               area: 85,   height: 3.4, cap: null },
-      haupthalle: { name: "Haupthalle",              area: 580,  height: 6.2, cap: 480  },
-      buehne:     { name: "Bühne",                   area: 195,  height: 8.4, cap: null },
-      backstage:  { name: "Backstage",               area: 120,  height: 3.6, cap: 40   },
-      technik:    { name: "Technik",                 area: 45,   height: 3.2, cap: null },
-      vip:        { name: "VIP Lounge",              area: 80,   height: 3.8, cap: 60   },
-    };
+    const deckBtn   = document.querySelector(".lt-deck-btn");
+    const deckPanel = document.querySelector(".lt-deck1-panel");
+    const locTop    = document.querySelector(".locationTop");
 
-    const nameEl    = document.getElementById("locRoomName");
-    const areaEl    = document.getElementById("locStatArea");
-    const heightEl  = document.getElementById("locStatHeight");
-    const capEl     = document.getElementById("locStatCap");
-    const capUnitEl = document.getElementById("locCapUnit");
+    if (deckBtn && deckPanel && locTop) {
+      let savedBtnRect = null;
 
-    function locCountUp(el, target, duration) {
-      if (target === null) { el.textContent = "—"; return; }
-      const isFloat = !Number.isInteger(target);
-      const startTime = performance.now();
-      const key = el._locRafKey = (el._locRafKey || 0) + 1;
-      function tick(now) {
-        if (el._locRafKey !== key) return;
-        const t = Math.min((now - startTime) / duration, 1);
-        const eased = 1 - Math.pow(1 - t, 3);
-        const val = target * eased;
-        el.textContent = isFloat
-          ? val.toFixed(1).replace(".", ",")
-          : Math.round(val).toLocaleString("de-DE");
-        if (t < 1) requestAnimationFrame(tick);
-      }
-      requestAnimationFrame(tick);
-    }
+      deckBtn.addEventListener("click", () => {
+        savedBtnRect = deckBtn.getBoundingClientRect();
+        const ltRect = locTop.getBoundingClientRect();
 
-    function setLocData(key, animate = true) {
-      const d = LOC_DATA[key];
-      if (!d || !nameEl) return;
-      nameEl.textContent = d.name;
-      const dur = animate ? 650 : 0;
-      locCountUp(areaEl,   d.area,   dur);
-      locCountUp(heightEl, d.height, dur);
-      if (d.cap === null) {
-        if (capEl)     { capEl._locRafKey = (capEl._locRafKey || 0) + 1; capEl.textContent = "—"; }
-        if (capUnitEl) capUnitEl.textContent = "";
-      } else {
-        locCountUp(capEl, d.cap, dur);
-        if (capUnitEl) capUnitEl.textContent = "Gäste";
-      }
-    }
+        gsap.set(deckPanel, {
+          display: "block",
+          top:    savedBtnRect.top  - ltRect.top,
+          left:   savedBtnRect.left - ltRect.left,
+          width:  savedBtnRect.width,
+          height: savedBtnRect.height,
+          borderRadius: "0 32px 0 32px",
+        });
 
-    // ── Hover: update data panel ─────────────────────────────────────────
-    document.querySelectorAll(".loc-room-group").forEach(g => {
-      const room = g.dataset.room;
-      g.addEventListener("mouseenter", () => {
-        if (!LOC_DATA[room]) return;
-        setLocData(room, true);
+        gsap.to(deckPanel, {
+          top: 0, left: 0, width: "100%", height: "100%",
+          borderRadius: "0px",
+          duration: 0.75, ease: "expo.inOut",
+        });
+
+        gsap.to([".lt-info", ".lt-data", deckBtn], {
+          opacity: 0, duration: 0.25, ease: "power2.in",
+        });
+
+        gsap.fromTo(
+          [".lt-d1-info", ".lt-d1-data", ".lt-d1-back"],
+          { opacity: 0, y: 16 },
+          { opacity: 1, y: 0, duration: 0.5, stagger: 0.1, delay: 0.6, ease: "power2.out",
+            onStart: () => {
+              document.querySelectorAll(".lt-d1-info, .lt-d1-data, .lt-d1-back").forEach(el => el.style.pointerEvents = "auto");
+              document.querySelectorAll(".lt-info, .lt-data, .lt-deck-btn").forEach(el => el.style.pointerEvents = "none");
+            }
+          }
+        );
       });
-      g.addEventListener("mouseleave", () => {
-        setLocData("_default", true);
-      });
-    });
 
-    // ── Count-up when section first scrolls into view
-    const locSection = document.getElementById("location");
-    if (locSection) {
-      let locSeen = false;
-      const locObs = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting && !locSeen) {
-          locSeen = true;
-          setLocData("_default", true);
-          locObs.disconnect();
-        }
-      }, { threshold: 0.35 });
-      locObs.observe(locSection);
+      const d1Back      = document.querySelector(".lt-d1-back");
+      const returnPanel = document.querySelector(".lt-return-panel");
+
+      if (d1Back && returnPanel) {
+        d1Back.addEventListener("click", () => {
+          const backRect = d1Back.getBoundingClientRect();
+          const ltRect   = locTop.getBoundingClientRect();
+
+          // Fade out deck1 content
+          gsap.to([".lt-d1-info", ".lt-d1-data", ".lt-d1-back"], {
+            opacity: 0, duration: 0.25, ease: "power2.in",
+          });
+
+          // Position return panel at the back button, then expand to fullscreen
+          gsap.set(returnPanel, {
+            display: "block",
+            top:    backRect.top  - ltRect.top,
+            left:   backRect.left - ltRect.left,
+            width:  backRect.width,
+            height: backRect.height,
+            borderRadius: "0 32px 0 32px",
+          });
+
+          gsap.to(returnPanel, {
+            top: 0, left: 0, width: "100%", height: "100%",
+            borderRadius: "0px",
+            duration: 0.75, ease: "expo.inOut", delay: 0.1,
+            onComplete: () => {
+              gsap.set(deckPanel,   { display: "none" });
+              gsap.set(returnPanel, { display: "none" });
+              gsap.set([".lt-d1-info", ".lt-d1-data", ".lt-d1-back"], { opacity: 0 });
+              document.querySelectorAll(".lt-d1-info, .lt-d1-data, .lt-d1-back").forEach(el => el.style.pointerEvents = "none");
+              gsap.fromTo(
+                [".lt-info", ".lt-data", deckBtn],
+                { opacity: 0, y: 16 },
+                { opacity: 1, y: 0, duration: 0.5, stagger: 0.1, ease: "power2.out",
+                  onStart: () => {
+                    document.querySelectorAll(".lt-info, .lt-data, .lt-deck-btn").forEach(el => el.style.pointerEvents = "auto");
+                  }
+                }
+              );
+            },
+          });
+        });
+      }
+    }
+  }
+
+  // ─── LocationTop Text Animation ─────────────────────────────────────────
+  {
+    const ltInfo = document.querySelector(".lt-info");
+    if (ltInfo) {
+      const split = new SplitText(ltInfo, { type: "lines", linesClass: "lt-line" });
+
+      // All lines start gray
+      gsap.set(split.lines, { color: "rgba(255,255,255,0.25)" });
+
+      // Scrub: each line goes from gray to white as you scroll, one after the other
+      gsap.to(split.lines, {
+        color: "rgba(255,255,255,1)",
+        ease: "none",
+        stagger: { each: 0.12, from: "start" },
+        scrollTrigger: {
+          trigger: ".location",
+          start: "top 60%",
+          end: "top -20%",
+          scrub: 1.2,
+        },
+      });
     }
   }
 
