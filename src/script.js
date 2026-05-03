@@ -22,19 +22,112 @@ ScrollTrigger.scrollerProxy(document.documentElement, {
   pinType: document.documentElement.style.transform ? "transform" : "fixed",
 });
 
-// ─── Event Data ──────────────────────────────────────────────────────────────
-const eventData = [
-  { artist: "Various Artists", title: "Back2Dock",          date: "14.03.26", location: "Flensburg", category: "Club Night",  hasTicket: true,  ticketUrl: "/anfrage.html", desc: "Eine Nacht voller Energie und Beats – die traditionelle Back2Dock-Nacht kehrt zurück ins Dock50." },
-  { artist: "Jerome",          title: "Jerome",             date: "21.03.26", location: "Hamburg",   category: "Live Music",  hasTicket: true,  ticketUrl: "/anfrage.html", desc: "Jerome bringt seinen unverwechselbaren Sound live auf die Dock50-Bühne in Hamburg." },
-  { artist: "DJ Collective",   title: "Sixteen Beats",      date: "28.03.26", location: "Flensburg", category: "Club Night",  hasTicket: true,  ticketUrl: "/anfrage.html", desc: "Das DJ Collective bringt sechzehn Beats, die die Nacht zum Leben erwecken." },
-  { artist: "Various DJs",     title: "Strictly Oldschool", date: "04.04.26", location: "Kiel",      category: "Club Night",  hasTicket: true,  ticketUrl: "/anfrage.html", desc: "Eine Nacht ganz im Zeichen der klassischen Sounds – Strictly Oldschool im Dock50 Kiel." },
-  { artist: "Kuult",           title: "Kuult",              date: "11.04.26", location: "Flensburg", category: "Live Music",  hasTicket: true,  ticketUrl: "/anfrage.html", desc: "Kuult live – emotionale Songs und kraftvolle Bühnenperformance im Dock50 Flensburg." },
-  { artist: "TBA",             title: "Live @ Dock50",      date: "18.04.26", location: "Hamburg",   category: "Live Music",  hasTicket: false, ticketUrl: "",              desc: "Details folgen – ein besonderer Abend im Dock50 Hamburg. Stay tuned." },
-  { artist: "TBA",             title: "Live @ Dock50",      date: "25.04.26", location: "Kiel",      category: "Live Music",  hasTicket: false, ticketUrl: "",              desc: "Details folgen – ein besonderer Abend im Dock50 Kiel. Stay tuned." },
-  { artist: "TBA",             title: "Live @ Dock50",      date: "02.05.26", location: "Flensburg", category: "Live Music",  hasTicket: false, ticketUrl: "",              desc: "Details folgen – ein besonderer Abend im Dock50 Flensburg. Stay tuned." },
-  { artist: "TBA",             title: "Live @ Dock50",      date: "09.05.26", location: "Hamburg",   category: "Live Music",  hasTicket: false, ticketUrl: "",              desc: "Details folgen – ein besonderer Abend im Dock50 Hamburg. Stay tuned." },
-  { artist: "TBA",             title: "Live @ Dock50",      date: "16.05.26", location: "Kiel",      category: "Live Music",  hasTicket: false, ticketUrl: "",              desc: "Details folgen – ein besonderer Abend im Dock50 Kiel. Stay tuned." },
+// ─── Event Library ───────────────────────────────────────────────────────────
+const _IMGS = [
+  "/event-back2dock.jpg", "/event-jerome.jpg", "/event-sixteenbeats.jpg",
+  "/event-strictlyoldschool.jpg", "/event-kuult.jpg", "/doc50-concert-1.jpg",
+  "/doc50-concert-2.jpg", "/doc50-concert-3.jpg", "/doc50-concert-5.jpg", "/doc50-concert-6.jpg",
 ];
+
+const eventLibrary = {
+  skylounge: [
+    { artist: "Various Artists", title: "Back2Dock",          date: "14.03.26", past: true,  location: "Skylounge", category: "Club Night", hasTicket: true,  ticketUrl: "/anfrage.html", image: _IMGS[0], desc: "Die traditionelle Back2Dock Nacht kehrt zurück in die DOCK50 Skylounge." },
+    { artist: "Jerome",          title: "Jerome",             date: "28.03.26", past: true,  location: "Skylounge", category: "Live Music", hasTicket: true,  ticketUrl: "/anfrage.html", image: _IMGS[1], desc: "Jerome bringt seinen unverwechselbaren Sound live auf die Skylounge-Bühne." },
+    { artist: "DJ Collective",   title: "Sixteen Beats",      date: "11.04.26", past: true,  location: "Skylounge", category: "Club Night", hasTicket: true,  ticketUrl: "/anfrage.html", image: _IMGS[2], desc: "Das DJ Collective bringt sechzehn Beats, die die Nacht zum Leben erwecken." },
+    { artist: "Various DJs",     title: "Strictly Oldschool", date: "18.04.26", past: true,  location: "Skylounge", category: "Club Night", hasTicket: true,  ticketUrl: "/anfrage.html", image: _IMGS[3], desc: "Eine Nacht ganz im Zeichen der klassischen Sounds – Strictly Oldschool." },
+    { artist: "Kuult",           title: "Kuult",              date: "09.05.26", past: false, location: "Skylounge", category: "Live Music", hasTicket: true,  ticketUrl: "/anfrage.html", image: _IMGS[4], desc: "Kuult live – emotionale Songs und kraftvolle Bühnenperformance." },
+    { artist: "TBA",             title: "Nachtschicht Vol.3", date: "23.05.26", past: false, location: "Skylounge", category: "Club Night", hasTicket: false, ticketUrl: "",              image: _IMGS[5], desc: "Details folgen – ein besonderer Club-Abend in der Skylounge. Stay tuned." },
+    { artist: "TBA",             title: "Sommernacht Open",   date: "06.06.26", past: false, location: "Skylounge", category: "Live Music", hasTicket: false, ticketUrl: "",              image: _IMGS[6], desc: "Die Sommernacht Open Air Session – Flensburger Hafen trifft Live-Musik." },
+    { artist: "TBA",             title: "Hafenklang",         date: "20.06.26", past: false, location: "Skylounge", category: "Club Night", hasTicket: false, ticketUrl: "",              image: _IMGS[7], desc: "Hafenklang – Beats direkt am Wasser, Skylounge at its best." },
+    { artist: "TBA",             title: "Club Nacht",         date: "04.07.26", past: false, location: "Skylounge", category: "Club Night", hasTicket: false, ticketUrl: "",              image: _IMGS[8], desc: "Die monatliche Club Nacht in der Skylounge. Details folgen." },
+    { artist: "TBA",             title: "Live Session I",     date: "18.07.26", past: false, location: "Skylounge", category: "Live Music", hasTicket: false, ticketUrl: "",              image: _IMGS[9], desc: "Sommersession live in der Skylounge – Künstler TBA." },
+    { artist: "TBA",             title: "Flensburger Nächte", date: "01.08.26", past: false, location: "Skylounge", category: "Club Night", hasTicket: false, ticketUrl: "",              image: _IMGS[0], desc: "Flensburger Nächte – die Sommerserie geht weiter." },
+    { artist: "TBA",             title: "Sunset Sessions",    date: "15.08.26", past: false, location: "Skylounge", category: "Club Night", hasTicket: false, ticketUrl: "",              image: _IMGS[1], desc: "Sunset Sessions – Sonnenuntergang trifft Electronic Music." },
+    { artist: "TBA",             title: "Herbst Festival",    date: "12.09.26", past: false, location: "Skylounge", category: "Live Music", hasTicket: false, ticketUrl: "",              image: _IMGS[2], desc: "Das Herbst Festival eröffnet die neue Saison in der Skylounge." },
+    { artist: "TBA",             title: "Oktober Beats",      date: "03.10.26", past: false, location: "Skylounge", category: "Club Night", hasTicket: false, ticketUrl: "",              image: _IMGS[3], desc: "Oktober Beats – die Clubnacht im goldenen Herbst." },
+    { artist: "TBA",             title: "Winter Opening",     date: "14.11.26", past: false, location: "Skylounge", category: "Live Music", hasTicket: false, ticketUrl: "",              image: _IMGS[4], desc: "Das Winter Opening läutet die neue Saison in der Skylounge ein." },
+    { artist: "TBA",             title: "Silvester Spezial",  date: "31.12.26", past: false, location: "Skylounge", category: "Club Night", hasTicket: false, ticketUrl: "",              image: _IMGS[5], desc: "Silvester Spezial – ins neue Jahr feiern in der Skylounge." },
+    { artist: "TBA",             title: "Neujahrsparty",      date: "10.01.27", past: false, location: "Skylounge", category: "Club Night", hasTicket: false, ticketUrl: "",              image: _IMGS[6], desc: "Das neue Jahr beginnt mit einer großen Feier in der Skylounge." },
+    { artist: "TBA",             title: "Valentine's Night",  date: "14.02.27", past: false, location: "Skylounge", category: "Live Music", hasTicket: false, ticketUrl: "",              image: _IMGS[7], desc: "Valentine's Night – ein romantischer Abend mit Live-Musik." },
+    { artist: "TBA",             title: "Frühlings Festival", date: "20.03.27", past: false, location: "Skylounge", category: "Live Music", hasTicket: false, ticketUrl: "",              image: _IMGS[8], desc: "Das Frühlings Festival begrüßt die neue Saison in der Skylounge." },
+    { artist: "TBA",             title: "Easter Special",     date: "03.04.27", past: false, location: "Skylounge", category: "Club Night", hasTicket: false, ticketUrl: "",              image: _IMGS[9], desc: "Easter Special – das Osterfest in der Skylounge." },
+  ],
+  deck1: [
+    { artist: "Various DJs",     title: "Deck1 Opening",      date: "07.03.26", past: true,  location: "Deck1",     category: "Club Night", hasTicket: true,  ticketUrl: "/anfrage.html", image: _IMGS[5], desc: "Die Eröffnungsnacht von Deck1 – das Unterdeck öffnet seine Tore." },
+    { artist: "TBA",             title: "Deep House Night",   date: "21.03.26", past: true,  location: "Deck1",     category: "Club Night", hasTicket: true,  ticketUrl: "/anfrage.html", image: _IMGS[6], desc: "Deep House Night im Deck1 – Sounds aus der Tiefe des Hafens." },
+    { artist: "TBA",             title: "Techno Special",     date: "04.04.26", past: true,  location: "Deck1",     category: "Club Night", hasTicket: true,  ticketUrl: "/anfrage.html", image: _IMGS[7], desc: "Techno Special – harter Sound im rohen Unterdeck von Dock50." },
+    { artist: "TBA",             title: "Bassline Vol.2",     date: "19.04.26", past: true,  location: "Deck1",     category: "Club Night", hasTicket: true,  ticketUrl: "/anfrage.html", image: _IMGS[8], desc: "Bassline Vol.2 – die Bass-Serie kehrt zurück ins Deck1." },
+    { artist: "TBA",             title: "Underground Session",date: "02.05.26", past: true,  location: "Deck1",     category: "Club Night", hasTicket: false, ticketUrl: "",              image: _IMGS[9], desc: "Underground Session – rohe Energie, dunkle Räume, starke Beats." },
+    { artist: "TBA",             title: "Deck1 Club Night",   date: "16.05.26", past: false, location: "Deck1",     category: "Club Night", hasTicket: false, ticketUrl: "",              image: _IMGS[0], desc: "Die monatliche Club Night im Deck1. Lineup TBA." },
+    { artist: "TBA",             title: "After Hours",        date: "30.05.26", past: false, location: "Deck1",     category: "Club Night", hasTicket: false, ticketUrl: "",              image: _IMGS[1], desc: "After Hours – wenn die Skylounge schließt, geht es weiter im Deck1." },
+    { artist: "TBA",             title: "Summer Beats",       date: "13.06.26", past: false, location: "Deck1",     category: "Club Night", hasTicket: false, ticketUrl: "",              image: _IMGS[2], desc: "Summer Beats – der Sommer zieht ins Deck1 ein." },
+    { artist: "TBA",             title: "Dark Room",          date: "27.06.26", past: false, location: "Deck1",     category: "Club Night", hasTicket: false, ticketUrl: "",              image: _IMGS[3], desc: "Dark Room – die dunkelste Nacht im Deck1. Minimale Lichter, maximale Energie." },
+    { artist: "TBA",             title: "Deck1 Sessions",     date: "11.07.26", past: false, location: "Deck1",     category: "Club Night", hasTicket: false, ticketUrl: "",              image: _IMGS[4], desc: "Deck1 Sessions – die Sommer-Clubnacht geht weiter." },
+    { artist: "TBA",             title: "Late Night Club",    date: "25.07.26", past: false, location: "Deck1",     category: "Club Night", hasTicket: false, ticketUrl: "",              image: _IMGS[5], desc: "Late Night Club – für alle Nachtschwärmer im Deck1." },
+    { artist: "TBA",             title: "Warehouse Party",    date: "08.08.26", past: false, location: "Deck1",     category: "Club Night", hasTicket: false, ticketUrl: "",              image: _IMGS[6], desc: "Warehouse Party – roher Industriesound im Unterdeck." },
+    { artist: "TBA",             title: "Herbst Vibes",       date: "19.09.26", past: false, location: "Deck1",     category: "Club Night", hasTicket: false, ticketUrl: "",              image: _IMGS[7], desc: "Herbst Vibes – die neue Saison startet im Deck1." },
+    { artist: "TBA",             title: "Oktober Sessions",   date: "10.10.26", past: false, location: "Deck1",     category: "Club Night", hasTicket: false, ticketUrl: "",              image: _IMGS[8], desc: "Oktober Sessions – dunkle Nächte, starke Musik im Deck1." },
+    { artist: "TBA",             title: "November Beats",     date: "21.11.26", past: false, location: "Deck1",     category: "Club Night", hasTicket: false, ticketUrl: "",              image: _IMGS[9], desc: "November Beats – die Wintersaison ist da. Deck1 heizt ein." },
+    { artist: "TBA",             title: "Deck1 Silvester",    date: "31.12.26", past: false, location: "Deck1",     category: "Club Night", hasTicket: false, ticketUrl: "",              image: _IMGS[0], desc: "Deck1 Silvester – die härteste Neujahrsnacht im Unterdeck." },
+    { artist: "TBA",             title: "Winter Sessions",    date: "17.01.27", past: false, location: "Deck1",     category: "Club Night", hasTicket: false, ticketUrl: "",              image: _IMGS[1], desc: "Winter Sessions – das neue Jahr startet dunkel und stark." },
+    { artist: "TBA",             title: "Deep Winter",        date: "21.02.27", past: false, location: "Deck1",     category: "Club Night", hasTicket: false, ticketUrl: "",              image: _IMGS[2], desc: "Deep Winter – der kälteste Abend des Jahres, der heißeste Club." },
+    { artist: "TBA",             title: "Spring Opener",      date: "27.03.27", past: false, location: "Deck1",     category: "Club Night", hasTicket: false, ticketUrl: "",              image: _IMGS[3], desc: "Spring Opener – das Deck1 begrüßt den Frühling." },
+    { artist: "TBA",             title: "Frühlings Beats",    date: "10.04.27", past: false, location: "Deck1",     category: "Club Night", hasTicket: false, ticketUrl: "",              image: _IMGS[4], desc: "Frühlings Beats – die neue Saison beginnt im Unterdeck." },
+  ],
+};
+
+let eventData = [];
+
+function parseEventDate(str) {
+  const [d, m, y] = str.split(".").map(Number);
+  return new Date(2000 + y, m - 1, d);
+}
+
+function getNearest8(filter) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const pool = filter === "all"
+    ? [...eventLibrary.skylounge, ...eventLibrary.deck1]
+    : (eventLibrary[filter.toLowerCase()] || [...eventLibrary.skylounge, ...eventLibrary.deck1]);
+  return pool
+    .filter(ev => !ev.past && parseEventDate(ev.date) >= today)
+    .sort((a, b) => parseEventDate(a.date) - parseEventDate(b.date))
+    .slice(0, 8);
+}
+
+let dividerTitleEls = [];
+
+function renderEvents(events) {
+  eventData = events;
+  const imgEls  = document.querySelectorAll(".project-img");
+  const nameEls = document.querySelectorAll(".project-name-item");
+  const divNums = document.querySelectorAll(".project-divider-num");
+
+  events.forEach((ev, i) => {
+    if (imgEls[i]) {
+      const img = imgEls[i].querySelector("img");
+      if (img) img.src = ev.image;
+      imgEls[i].dataset.location = ev.location;
+    }
+    if (nameEls[i]) {
+      const p = nameEls[i].querySelector("p");
+      if (p) p.textContent = ev.title;
+      const numEl = nameEls[i].querySelector(".proj-num");
+      if (numEl) numEl.textContent = String(i + 1).padStart(2, "0");
+      nameEls[i].dataset.location = ev.location;
+    }
+    if (divNums[i]) {
+      const venueAbbr = ev.location === "Skylounge" ? "SL" : "D1";
+      divNums[i].textContent = `${String(i + 1).padStart(2, "0")} — ${venueAbbr} · 20${ev.date.slice(-2)}`;
+    }
+    if (dividerTitleEls[i]) {
+      dividerTitleEls[i].textContent = ev.title;
+    }
+  });
+
+  const pidxEl = document.querySelector(".project-index h2");
+  if (pidxEl) pidxEl.textContent = events[0]?.date ?? "";
+}
 
 // ─── Module-scope state ───────────────────────────────────────────────────────
 let spST        = null;   // spotlight ScrollTrigger instance
@@ -42,6 +135,9 @@ let openCardIdx = -1;     // index of currently open side panel (-1 = closed)
 
 // ─── window.load ─────────────────────────────────────────────────────────────
 window.addEventListener("load", () => {
+
+  // ─── Initial render ────────────────────────────────────────────────────
+  renderEvents(getNearest8("all"));
 
   // ─── SplitText ─────────────────────────────────────────────────────────
   const headlineEl = document.querySelector(".headline");
@@ -208,7 +304,7 @@ window.addEventListener("load", () => {
       });
 
       const projectDividers = spotlightSection.querySelectorAll(".project-divider");
-      const dividerTitleEls = [];
+      dividerTitleEls = [];
 
       projectDividers.forEach((div, di) => {
         const wrapper = document.createElement("div");
@@ -515,17 +611,9 @@ window.addEventListener("load", () => {
       filterItems.forEach(i => i.classList.remove("active"));
       item.classList.add("active");
       moveIndicator(item);
-      document.querySelectorAll(".project-img[data-location]").forEach((img) => {
-        const match = loc === "all" || img.dataset.location === loc;
-        gsap.to(img, { opacity: match ? 0.35 : 0.06, duration: 0.35, ease: "power2.out" });
-      });
-      document.querySelectorAll(".project-name-item[data-location]").forEach((el) => {
-        const match  = loc === "all" || el.dataset.location === loc;
-        const textEl = el.querySelector("p");
-        const numEl  = el.querySelector(".proj-num");
-        if (textEl) gsap.to(textEl, { color: match ? null : "rgba(255,255,255,0.07)", duration: 0.35 });
-        if (numEl)  gsap.to(numEl,  { color: match ? null : "rgba(255,255,255,0.07)", duration: 0.35 });
-      });
+      if (openCardIdx !== -1) closeCard(false);
+      renderEvents(getNearest8(loc));
+      ScrollTrigger.refresh();
     });
   });
 
@@ -552,6 +640,7 @@ window.addEventListener("load", () => {
   });
 
   window._activeLocFilter = "ALL";
+  ScrollTrigger.refresh();
 
   // ─── Deck1 Panel ─────────────────────────────────────────────────────────
   {

@@ -177,6 +177,11 @@ section {
   padding-left: 1.5rem;
 }
 
+.hero-doc-o {
+  color: rgba(255,255,255,0.95);
+  -webkit-text-stroke: 0;
+}
+
 .hero-50-fill {
   font-family: "Abnes", sans-serif;
   font-size: min(16vw, 38svh);
@@ -254,6 +259,7 @@ section {
   overflow: hidden;
   position: relative;
   flex-shrink: 0;
+  border-radius: 15px;
 }
 
 .project-img::after {
