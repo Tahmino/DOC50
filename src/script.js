@@ -35,7 +35,7 @@ const eventLibrary = {
     { artist: "Jerome",          title: "Jerome",             date: "28.03.26", past: true,  location: "Skylounge", category: "Live Music", hasTicket: true,  ticketUrl: "/anfrage.html", image: _IMGS[1], desc: "Jerome bringt seinen unverwechselbaren Sound live auf die Skylounge-Bühne." },
     { artist: "DJ Collective",   title: "Sixteen Beats",      date: "11.04.26", past: true,  location: "Skylounge", category: "Club Night", hasTicket: true,  ticketUrl: "/anfrage.html", image: _IMGS[2], desc: "Das DJ Collective bringt sechzehn Beats, die die Nacht zum Leben erwecken." },
     { artist: "Various DJs",     title: "Strictly Oldschool", date: "18.04.26", past: true,  location: "Skylounge", category: "Club Night", hasTicket: true,  ticketUrl: "/anfrage.html", image: _IMGS[3], desc: "Eine Nacht ganz im Zeichen der klassischen Sounds – Strictly Oldschool." },
-    { artist: "Kuult",           title: "Kuult",              date: "09.05.26", past: false, location: "Skylounge", category: "Live Music", hasTicket: true,  ticketUrl: "/anfrage.html", image: _IMGS[4], desc: "Kuult live – emotionale Songs und kraftvolle Bühnenperformance." },
+    { artist: "Kuult",           title: "Kuult",              date: "09.05.26", past: true, location: "Skylounge", category: "Live Music", hasTicket: true,  ticketUrl: "/anfrage.html", image: _IMGS[4], desc: "Kuult live – emotionale Songs und kraftvolle Bühnenperformance." },
     { artist: "TBA",             title: "Nachtschicht Vol.3", date: "23.05.26", past: false, location: "Skylounge", category: "Club Night", hasTicket: false, ticketUrl: "",              image: _IMGS[5], desc: "Details folgen – ein besonderer Club-Abend in der Skylounge. Stay tuned." },
     { artist: "TBA",             title: "Sommernacht Open",   date: "06.06.26", past: false, location: "Skylounge", category: "Live Music", hasTicket: false, ticketUrl: "",              image: _IMGS[6], desc: "Die Sommernacht Open Air Session – Flensburger Hafen trifft Live-Musik." },
     { artist: "TBA",             title: "Hafenklang",         date: "20.06.26", past: false, location: "Skylounge", category: "Club Night", hasTicket: false, ticketUrl: "",              image: _IMGS[7], desc: "Hafenklang – Beats direkt am Wasser, Skylounge at its best." },
@@ -58,7 +58,7 @@ const eventLibrary = {
     { artist: "TBA",             title: "Techno Special",     date: "04.04.26", past: true,  location: "Deck1",     category: "Club Night", hasTicket: true,  ticketUrl: "/anfrage.html", image: _IMGS[7], desc: "Techno Special – harter Sound im rohen Unterdeck von Dock50." },
     { artist: "TBA",             title: "Bassline Vol.2",     date: "19.04.26", past: true,  location: "Deck1",     category: "Club Night", hasTicket: true,  ticketUrl: "/anfrage.html", image: _IMGS[8], desc: "Bassline Vol.2 – die Bass-Serie kehrt zurück ins Deck1." },
     { artist: "TBA",             title: "Underground Session",date: "02.05.26", past: true,  location: "Deck1",     category: "Club Night", hasTicket: false, ticketUrl: "",              image: _IMGS[9], desc: "Underground Session – rohe Energie, dunkle Räume, starke Beats." },
-    { artist: "TBA",             title: "Deck1 Club Night",   date: "16.05.26", past: false, location: "Deck1",     category: "Club Night", hasTicket: false, ticketUrl: "",              image: _IMGS[0], desc: "Die monatliche Club Night im Deck1. Lineup TBA." },
+    { artist: "TBA",             title: "Deck1 Club Night",   date: "16.05.26", past: true, location: "Deck1",     category: "Club Night", hasTicket: false, ticketUrl: "",              image: _IMGS[0], desc: "Die monatliche Club Night im Deck1. Lineup TBA." },
     { artist: "TBA",             title: "After Hours",        date: "30.05.26", past: false, location: "Deck1",     category: "Club Night", hasTicket: false, ticketUrl: "",              image: _IMGS[1], desc: "After Hours – wenn die Skylounge schließt, geht es weiter im Deck1." },
     { artist: "TBA",             title: "Summer Beats",       date: "13.06.26", past: false, location: "Deck1",     category: "Club Night", hasTicket: false, ticketUrl: "",              image: _IMGS[2], desc: "Summer Beats – der Sommer zieht ins Deck1 ein." },
     { artist: "TBA",             title: "Dark Room",          date: "27.06.26", past: false, location: "Deck1",     category: "Club Night", hasTicket: false, ticketUrl: "",              image: _IMGS[3], desc: "Dark Room – die dunkelste Nacht im Deck1. Minimale Lichter, maximale Energie." },
@@ -83,7 +83,7 @@ function parseEventDate(str) {
   return new Date(2000 + y, m - 1, d);
 }
 
-function getNearest8(filter) {
+function getNearestN(filter, n = 8) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const pool = filter === "all"
@@ -92,7 +92,7 @@ function getNearest8(filter) {
   return pool
     .filter(ev => !ev.past && parseEventDate(ev.date) >= today)
     .sort((a, b) => parseEventDate(a.date) - parseEventDate(b.date))
-    .slice(0, 8);
+    .slice(0, n);
 }
 
 let dividerTitleEls = [];
@@ -125,19 +125,286 @@ function renderEvents(events) {
     }
   });
 
+  // Slots jenseits events.length ausblenden (z.B. wenn Pool < 16)
+  imgEls.forEach((imgEl, i) => {
+    if (i >= events.length) {
+      const img = imgEl.querySelector("img");
+      if (img) img.src = "";
+      imgEl.style.visibility = "hidden";
+    } else {
+      imgEl.style.visibility = "";
+    }
+  });
+  nameEls.forEach((nameEl, i) => {
+    nameEl.style.visibility = i < events.length ? "" : "hidden";
+  });
+
   const pidxEl = document.querySelector(".project-index h2");
   if (pidxEl) pidxEl.textContent = events[0]?.date ?? "";
 }
 
 // ─── Module-scope state ───────────────────────────────────────────────────────
-let spST        = null;   // spotlight ScrollTrigger instance
-let openCardIdx = -1;     // index of currently open side panel (-1 = closed)
+let spST          = null;   // spotlight ScrollTrigger instance
+let openCardIdx   = -1;     // index of currently open side panel (-1 = closed)
+let currentCount  = 8;      // how many events are currently shown (8 or 16)
+let currentFilter = "all";  // active filter key
+
+// ─── Spotlight Init (aufrufbar bei Expansion + Filter-Wechsel) ───────────────
+function initSpotlight() {
+  // Cleanup vorheriger Instanz
+  if (spST) { spST.kill(); spST = null; }
+  const oldConnLeft = document.getElementById("connectorLeftDyn");
+  if (oldConnLeft) oldConnLeft.remove();
+  document.querySelectorAll(".divider-title-wrapper").forEach(el => el.remove());
+  dividerTitleEls = [];
+
+  const spotlightSection = document.querySelector(".spotlight");
+  if (!spotlightSection) return;
+
+  const projectIndex           = spotlightSection.querySelector(".project-index h2");
+  const projectImgs            = spotlightSection.querySelectorAll(".project-img:not(.spotlight-extra)");
+  const projectImagesContainer = spotlightSection.querySelector(".project-images");
+  const projectNameItems       = spotlightSection.querySelectorAll(".project-name-item:not(.spotlight-extra)");
+  const connector              = spotlightSection.querySelector(".project-connector");
+  const totalProjectCount      = projectNameItems.length;
+
+  if (!projectIndex || !projectImagesContainer || totalProjectCount === 0) {
+    console.warn("Spotlight: Pflicht-Elemente fehlen");
+    return;
+  }
+
+  const VH  = window.innerHeight;
+  const mid = VH / 2;
+
+  const imgsH          = projectImagesContainer.offsetHeight;
+  const moveDistImages = VH - imgsH;
+
+  const firstImg     = projectImgs[0];
+  const firstDivider = spotlightSection.querySelector(".project-divider:not(.spotlight-extra)");
+  const imgH         = firstImg     ? firstImg.offsetHeight     : VH * 0.197;
+  const divH         = firstDivider ? firstDivider.offsetHeight : VH * 0.10;
+  const halfSpan     = (imgH + 2 * divH) / 2;
+  const ITEM_GAP     = Math.max(VH * 0.025, imgH * 0.18);
+
+  const SLOTS = {
+    TOP_1:  mid - halfSpan - ITEM_GAP,
+    TOP_2:  mid - halfSpan,
+    CENTER: mid,
+    BOT_1:  mid + halfSpan,
+    BOT_2:  mid + halfSpan + ITEM_GAP,
+    EXIT:   -100,
+    PARK:   VH + 100,
+  };
+
+  const SLOT_OPACITY = {
+    TOP_1: 0.32, TOP_2: 0.45, CENTER: 1,
+    BOT_1: 0.45, BOT_2: 0.32, EXIT: 0, PARK: 0,
+  };
+  const SLOT_COLOR = {
+    TOP_1:  "rgba(255,255,255,0.32)", TOP_2:  "rgba(255,255,255,0.45)",
+    CENTER: "rgba(255,255,255,0.95)",
+    BOT_1:  "rgba(255,255,255,0.45)", BOT_2:  "rgba(255,255,255,0.32)",
+    EXIT:   "rgba(255,255,255,0)",    PARK:   "rgba(255,255,255,0)",
+  };
+
+  function getSlot(i, N) {
+    const d = i - N;
+    if (d === -2) return "TOP_1";
+    if (d === -1) return "TOP_2";
+    if (d ===  0) return "CENTER";
+    if (d === +1) return "BOT_1";
+    if (d === +2) return "BOT_2";
+    if (d  <  -2) return "EXIT";
+    return "PARK";
+  }
+
+  gsap.set(projectNameItems, { top: SLOTS.PARK, opacity: 0, yPercent: -50 });
+  gsap.set(projectIndex,     { opacity: 0 });
+  projectIndex.textContent = eventData[0]?.date ?? "01.01.26";
+  if (connector) gsap.set(connector, { display: "none", opacity: 0 });
+
+  // ─── Linker Connector (Datum ↔ Bild) ─────────────────────────────────
+  const connectorLeft = document.createElement("div");
+  connectorLeft.className = "project-connector";
+  connectorLeft.id = "connectorLeftDyn";
+  spotlightSection.appendChild(connectorLeft);
+  connectorLeft.innerHTML = `<div class="project-connector-line" style="order:1;"></div><div class="project-connector-dot" style="order:2;"></div>`;
+  gsap.set(connectorLeft, { display: "none", opacity: 0 });
+
+  // ─── Divider-Titel ───────────────────────────────────────────────────
+  const projectTitles = Array.from(projectNameItems).map(item => {
+    const p = item.querySelector("p");
+    return p ? p.textContent.trim() : "";
+  });
+
+  const projectDividers = spotlightSection.querySelectorAll(".project-divider:not(.spotlight-extra)");
+
+  projectDividers.forEach((div, di) => {
+    const wrapper = document.createElement("div");
+    wrapper.className = "divider-title-wrapper";
+    const titleEl = document.createElement("span");
+    titleEl.className = "divider-title-text";
+    titleEl.textContent = projectTitles[di] || "";
+    wrapper.appendChild(titleEl);
+    const numSpan = div.querySelector(".project-divider-num");
+    div.insertBefore(wrapper, numSpan ? numSpan.nextSibling : null);
+    dividerTitleEls.push(titleEl);
+    gsap.set(titleEl, { clipPath: "inset(0 0 100% 0)", opacity: 0 });
+  });
+
+  let lastDividerN = -99;
+
+  function updateDividerTitles(N, scrollDir) {
+    if (N === lastDividerN) return;
+    const prevN  = lastDividerN;
+    lastDividerN = N;
+
+    dividerTitleEls.forEach((titleEl, di) => {
+      const isActive  = (di === N);
+      const wasActive = (di === prevN);
+
+      if (isActive && !wasActive) {
+        gsap.killTweensOf(titleEl);
+        gsap.fromTo(titleEl,
+          { clipPath: scrollDir > 0 ? "inset(0 0 100% 0)" : "inset(100% 0 0% 0)", opacity: 0, y: scrollDir > 0 ? 6 : -6 },
+          { clipPath: "inset(0 0 0% 0)", opacity: 1, y: 0, duration: 0.35, ease: "power2.out" }
+        );
+      } else if (!isActive && wasActive) {
+        gsap.killTweensOf(titleEl);
+        gsap.to(titleEl, {
+          clipPath: scrollDir > 0 ? "inset(100% 0 0% 0)" : "inset(0 0 100% 0)",
+          opacity: 0, y: scrollDir > 0 ? -6 : 6,
+          duration: 0.25, ease: "power2.in",
+        });
+      }
+    });
+  }
+
+  let lastValidN   = 0;
+  let lastDisplayN = -99;
+
+  function applySlots(N) {
+    const displayN = (N >= 0 && N < totalProjectCount) ? N : lastValidN;
+    if (N >= 0 && N < totalProjectCount) lastValidN = N;
+    const changed  = (displayN !== lastDisplayN);
+    lastDisplayN   = displayN;
+
+    if (openCardIdx !== -1) return;
+
+    if (changed) {
+      gsap.to(projectIndex, { opacity: 0, duration: 0.12, ease: "power2.in", onComplete: () => {
+        projectIndex.textContent = eventData[displayN]?.date ?? `${String(displayN + 1).padStart(2, "0")}.01.26`;
+        gsap.to(projectIndex, { opacity: 1, duration: 0.2, ease: "power2.out" });
+      }});
+    }
+
+    projectNameItems.forEach((item, i) => {
+      const slot        = getSlot(i, displayN);
+      const dest        = SLOTS[slot];
+      const filteredOut = window._activeLocFilter && window._activeLocFilter !== "ALL" && item.dataset.location !== window._activeLocFilter;
+      const alpha       = filteredOut ? 0.05 : SLOT_OPACITY[slot];
+      const color       = filteredOut ? "rgba(255,255,255,0.07)" : SLOT_COLOR[slot];
+      const numColor    = (slot === "CENTER" && !filteredOut) ? "rgba(255,255,255,0.50)" : "rgba(255,255,255,0.08)";
+
+      gsap.killTweensOf(item);
+      if (changed) {
+        gsap.to(item, { top: dest, opacity: alpha, yPercent: -50, x: 0, duration: 0.22, ease: "power4.inOut" });
+      } else {
+        gsap.set(item, { top: dest, opacity: alpha, yPercent: -50, x: 0 });
+      }
+
+      const textEl = item.querySelector("p");
+      const numEl  = item.querySelector(".proj-num");
+      if (textEl) {
+        gsap.killTweensOf(textEl);
+        if (changed) gsap.to(textEl, { color, duration: 0.22, ease: "power4.inOut" });
+        else         gsap.set(textEl, { color });
+      }
+      if (numEl) {
+        gsap.killTweensOf(numEl);
+        if (changed) gsap.to(numEl, { color: numColor, duration: 0.22, ease: "power4.inOut" });
+        else         gsap.set(numEl, { color: numColor });
+      }
+    });
+  }
+
+  // ─── ScrollTrigger ───────────────────────────────────────────────────
+  spST = ScrollTrigger.create({
+    trigger: spotlightSection,
+    start: "top top",
+    end: `+=${VH * totalProjectCount * 5 / 8}px`,
+    pin: true,
+    pinSpacing: true,
+    onUpdate: (self) => {
+      const progress  = self.progress;
+      const scrollDir = self.direction;
+
+      gsap.set(projectImagesContainer, { y: progress * moveDistImages });
+
+      const dateOpacity = Math.min(1, progress / 0.04) * Math.min(1, (1 - progress) / 0.02);
+      gsap.set(projectIndex, { opacity: dateOpacity });
+
+      let N = 0;
+      for (let i = totalProjectCount - 1; i >= 0; i--) {
+        const r = projectImgs[i].getBoundingClientRect();
+        if (r.top <= mid) { N = i; break; }
+      }
+
+      projectImgs.forEach((img) => {
+        const r = img.getBoundingClientRect();
+        const filteredOut = window._activeLocFilter && window._activeLocFilter !== "ALL" && img.dataset.location !== window._activeLocFilter;
+        const zone = VH * 0.28;
+        const isCenter = r.top <= mid + zone && r.bottom >= mid - zone;
+        gsap.set(img, { opacity: filteredOut ? 0.06 : (isCenter ? 1 : 0.35) });
+      });
+
+      applySlots(N);
+      updateDividerTitles(N, scrollDir);
+
+      if (connector && openCardIdx === -1) {
+        const activeImg = Array.from(projectImgs).find(img => {
+          const r = img.getBoundingClientRect();
+          return r.top <= mid && r.bottom >= mid;
+        });
+        const cItem = projectNameItems[Math.max(0, Math.min(N, totalProjectCount - 1))];
+
+        if (activeImg && cItem && N >= 0 && N < totalProjectCount) {
+          const imgR  = activeImg.getBoundingClientRect();
+          const itemR = cItem.getBoundingClientRect();
+          const idxR  = projectIndex.getBoundingClientRect();
+
+          const lineX  = imgR.right + 10;
+          const lineW  = Math.max(0, itemR.left - lineX - 10);
+          const rightY = itemR.top + itemR.height / 2;
+          gsap.set(connector, {
+            display: "flex", left: lineX, top: rightY,
+            width: lineW, opacity: dateOpacity > 0.15 ? 0.5 : 0,
+          });
+
+          const leftLineEnd   = imgR.left - 10;
+          const leftLineStart = idxR.right + 10;
+          const leftLineW     = Math.max(0, leftLineEnd - leftLineStart);
+          const leftY         = idxR.top + idxR.height / 2;
+          gsap.set(connectorLeft, {
+            display: "flex", left: leftLineStart, top: leftY,
+            width: leftLineW, opacity: dateOpacity > 0.15 ? 0.5 : 0,
+          });
+        } else {
+          gsap.set(connector,     { opacity: 0 });
+          gsap.set(connectorLeft, { opacity: 0 });
+        }
+      }
+    },
+  });
+
+  ScrollTrigger.refresh();
+}
 
 // ─── window.load ─────────────────────────────────────────────────────────────
 window.addEventListener("load", () => {
 
   // ─── Initial render ────────────────────────────────────────────────────
-  renderEvents(getNearest8("all"));
+  renderEvents(getNearestN("all"));
 
   // ─── SplitText ─────────────────────────────────────────────────────────
   const headlineEl = document.querySelector(".headline");
@@ -226,249 +493,7 @@ window.addEventListener("load", () => {
   }
 
   // ─── Spotlight ─────────────────────────────────────────────────────────
-  const spotlightSection = document.querySelector(".spotlight");
-
-  if (spotlightSection) {
-    const projectIndex           = spotlightSection.querySelector(".project-index h2");
-    const projectImgs            = spotlightSection.querySelectorAll(".project-img");
-    const projectImagesContainer = spotlightSection.querySelector(".project-images");
-    const projectNameItems       = spotlightSection.querySelectorAll(".project-name-item");
-    const connector              = spotlightSection.querySelector(".project-connector");
-    const totalProjectCount      = projectNameItems.length;
-
-    if (!projectIndex || !projectImagesContainer || totalProjectCount === 0) {
-      console.warn("Spotlight: Pflicht-Elemente fehlen");
-    } else {
-
-      const VH  = window.innerHeight;
-      const mid = VH / 2;
-
-      const imgsH        = projectImagesContainer.offsetHeight;
-      const moveDistImages = VH - imgsH;
-
-      const firstImg     = projectImgs[0];
-      const firstDivider = spotlightSection.querySelector(".project-divider");
-      const imgH         = firstImg     ? firstImg.offsetHeight     : VH * 0.197;
-      const divH         = firstDivider ? firstDivider.offsetHeight : VH * 0.10;
-      const halfSpan     = (imgH + 2 * divH) / 2;
-      const ITEM_GAP     = Math.max(VH * 0.025, imgH * 0.18);
-
-      const SLOTS = {
-        TOP_1:  mid - halfSpan - ITEM_GAP,
-        TOP_2:  mid - halfSpan,
-        CENTER: mid,
-        BOT_1:  mid + halfSpan,
-        BOT_2:  mid + halfSpan + ITEM_GAP,
-        EXIT:   -100,
-        PARK:   VH + 100,
-      };
-
-      const SLOT_OPACITY = {
-        TOP_1: 0.32, TOP_2: 0.45, CENTER: 1,
-        BOT_1: 0.45, BOT_2: 0.32, EXIT: 0, PARK: 0,
-      };
-      const SLOT_COLOR = {
-        TOP_1:  "rgba(255,255,255,0.32)", TOP_2:  "rgba(255,255,255,0.45)",
-        CENTER: "rgba(255,255,255,0.95)",
-        BOT_1:  "rgba(255,255,255,0.45)", BOT_2:  "rgba(255,255,255,0.32)",
-        EXIT:   "rgba(255,255,255,0)",    PARK:   "rgba(255,255,255,0)",
-      };
-
-      function getSlot(i, N) {
-        const d = i - N;
-        if (d === -2) return "TOP_1";
-        if (d === -1) return "TOP_2";
-        if (d ===  0) return "CENTER";
-        if (d === +1) return "BOT_1";
-        if (d === +2) return "BOT_2";
-        if (d  <  -2) return "EXIT";
-        return "PARK";
-      }
-
-      gsap.set(projectNameItems, { top: SLOTS.PARK, opacity: 0, yPercent: -50 });
-      gsap.set(projectIndex,     { opacity: 0 });
-      projectIndex.textContent = eventData[0]?.date ?? "01.01.26";
-      if (connector) gsap.set(connector, { display: "none", opacity: 0 });
-
-      // ─── Linker Connector (Datum ↔ Bild) ─────────────────────────────────
-      const connectorLeft = document.createElement("div");
-      connectorLeft.className = "project-connector";
-      spotlightSection.appendChild(connectorLeft);
-      connectorLeft.innerHTML = `<div class="project-connector-line" style="order:1;"></div><div class="project-connector-dot" style="order:2;"></div>`;
-      gsap.set(connectorLeft, { display: "none", opacity: 0 });
-
-      // ─── Divider-Titel ───────────────────────────────────────────────────
-      const projectTitles = Array.from(projectNameItems).map(item => {
-        const p = item.querySelector("p");
-        return p ? p.textContent.trim() : "";
-      });
-
-      const projectDividers = spotlightSection.querySelectorAll(".project-divider");
-      dividerTitleEls = [];
-
-      projectDividers.forEach((div, di) => {
-        const wrapper = document.createElement("div");
-        wrapper.className = "divider-title-wrapper";
-        const titleEl = document.createElement("span");
-        titleEl.className = "divider-title-text";
-        titleEl.textContent = projectTitles[di] || "";
-        wrapper.appendChild(titleEl);
-        const numSpan = div.querySelector(".project-divider-num");
-        div.insertBefore(wrapper, numSpan ? numSpan.nextSibling : null);
-        dividerTitleEls.push(titleEl);
-        gsap.set(titleEl, { clipPath: "inset(0 0 100% 0)", opacity: 0 });
-      });
-
-      let lastDividerN = -99;
-
-      function updateDividerTitles(N, scrollDir) {
-        if (N === lastDividerN) return;
-        const prevN  = lastDividerN;
-        lastDividerN = N;
-
-        dividerTitleEls.forEach((titleEl, di) => {
-          const isActive  = (di === N);
-          const wasActive = (di === prevN);
-
-          if (isActive && !wasActive) {
-            gsap.killTweensOf(titleEl);
-            gsap.fromTo(titleEl,
-              { clipPath: scrollDir > 0 ? "inset(0 0 100% 0)" : "inset(100% 0 0% 0)", opacity: 0, y: scrollDir > 0 ? 6 : -6 },
-              { clipPath: "inset(0 0 0% 0)", opacity: 1, y: 0, duration: 0.35, ease: "power2.out" }
-            );
-          } else if (!isActive && wasActive) {
-            gsap.killTweensOf(titleEl);
-            gsap.to(titleEl, {
-              clipPath: scrollDir > 0 ? "inset(100% 0 0% 0)" : "inset(0 0 100% 0)",
-              opacity: 0, y: scrollDir > 0 ? -6 : 6,
-              duration: 0.25, ease: "power2.in",
-            });
-          }
-        });
-      }
-
-      let lastValidN   = 0;
-      let lastDisplayN = -99;
-
-      function applySlots(N) {
-        const displayN = (N >= 0 && N < totalProjectCount) ? N : lastValidN;
-        if (N >= 0 && N < totalProjectCount) lastValidN = N;
-        const changed  = (displayN !== lastDisplayN);
-        lastDisplayN   = displayN;
-
-        // While a card is open: don't start slot animations (would abort slide-out)
-        if (openCardIdx !== -1) return;
-
-        if (changed) {
-          gsap.to(projectIndex, { opacity: 0, duration: 0.12, ease: "power2.in", onComplete: () => {
-            projectIndex.textContent = eventData[displayN]?.date ?? `${String(displayN + 1).padStart(2, "0")}.01.26`;
-            gsap.to(projectIndex, { opacity: 1, duration: 0.2, ease: "power2.out" });
-          }});
-        }
-
-        projectNameItems.forEach((item, i) => {
-          const slot        = getSlot(i, displayN);
-          const dest        = SLOTS[slot];
-          const filteredOut = window._activeLocFilter && window._activeLocFilter !== "ALL" && item.dataset.location !== window._activeLocFilter;
-          const alpha       = filteredOut ? 0.05 : SLOT_OPACITY[slot];
-          const color       = filteredOut ? "rgba(255,255,255,0.07)" : SLOT_COLOR[slot];
-          const numColor    = (slot === "CENTER" && !filteredOut) ? "rgba(255,255,255,0.50)" : "rgba(255,255,255,0.08)";
-
-          gsap.killTweensOf(item);
-          if (changed) {
-            gsap.to(item, { top: dest, opacity: alpha, yPercent: -50, x: 0, duration: 0.22, ease: "power4.inOut" });
-          } else {
-            gsap.set(item, { top: dest, opacity: alpha, yPercent: -50, x: 0 });
-          }
-
-          const textEl = item.querySelector("p");
-          const numEl  = item.querySelector(".proj-num");
-          if (textEl) {
-            gsap.killTweensOf(textEl);
-            if (changed) gsap.to(textEl, { color, duration: 0.22, ease: "power4.inOut" });
-            else         gsap.set(textEl, { color });
-          }
-          if (numEl) {
-            gsap.killTweensOf(numEl);
-            if (changed) gsap.to(numEl, { color: numColor, duration: 0.22, ease: "power4.inOut" });
-            else         gsap.set(numEl, { color: numColor });
-          }
-        });
-      }
-
-      // ─── ScrollTrigger ───────────────────────────────────────────────────
-      spST = ScrollTrigger.create({
-        trigger: spotlightSection,
-        start: "top top",
-        end: `+=${VH * 5}px`,
-        pin: true,
-        pinSpacing: true,
-        onUpdate: (self) => {
-          const progress  = self.progress;
-          const scrollDir = self.direction;
-
-          gsap.set(projectImagesContainer, { y: progress * moveDistImages });
-
-          const dateOpacity = Math.min(1, progress / 0.04) * Math.min(1, (1 - progress) / 0.02);
-          gsap.set(projectIndex, { opacity: dateOpacity });
-
-          let N = 0;
-          for (let i = totalProjectCount - 1; i >= 0; i--) {
-            const r = projectImgs[i].getBoundingClientRect();
-            if (r.top <= mid) { N = i; break; }
-          }
-
-          projectImgs.forEach((img) => {
-            const r = img.getBoundingClientRect();
-            const filteredOut = window._activeLocFilter && window._activeLocFilter !== "ALL" && img.dataset.location !== window._activeLocFilter;
-            const zone = VH * 0.28;
-            const isCenter = r.top <= mid + zone && r.bottom >= mid - zone;
-            gsap.set(img, { opacity: filteredOut ? 0.06 : (isCenter ? 1 : 0.35) });
-          });
-
-          applySlots(N);
-          updateDividerTitles(N, scrollDir);
-
-          if (connector && openCardIdx === -1) {
-            const activeImg = Array.from(projectImgs).find(img => {
-              const r = img.getBoundingClientRect();
-              return r.top <= mid && r.bottom >= mid;
-            });
-            const cItem = projectNameItems[Math.max(0, Math.min(N, totalProjectCount - 1))];
-
-            if (activeImg && cItem && N >= 0 && N < totalProjectCount) {
-              const imgR  = activeImg.getBoundingClientRect();
-              const itemR = cItem.getBoundingClientRect();
-              const idxR  = projectIndex.getBoundingClientRect();
-
-              const lineX  = imgR.right + 10;
-              const lineW  = Math.max(0, itemR.left - lineX - 10);
-              const rightY = itemR.top + itemR.height / 2;
-              gsap.set(connector, {
-                display: "flex", left: lineX, top: rightY,
-                width: lineW, opacity: dateOpacity > 0.15 ? 0.5 : 0,
-              });
-
-              const leftLineEnd   = imgR.left - 10;
-              const leftLineStart = idxR.right + 10;
-              const leftLineW     = Math.max(0, leftLineEnd - leftLineStart);
-              const leftY         = idxR.top + idxR.height / 2;
-              gsap.set(connectorLeft, {
-                display: "flex", left: leftLineStart, top: leftY,
-                width: leftLineW, opacity: dateOpacity > 0.15 ? 0.5 : 0,
-              });
-            } else {
-              gsap.set(connector,     { opacity: 0 });
-              gsap.set(connectorLeft, { opacity: 0 });
-            }
-          }
-        },
-      });
-
-      ScrollTrigger.refresh();
-
-    }
-  }
+  initSpotlight();
 
   // ─── Side Panel ──────────────────────────────────────────────────────────
   const espPanel   = document.getElementById("eventSidePanel");
@@ -593,6 +618,17 @@ window.addEventListener("load", () => {
   const filterBar   = document.getElementById("eventFilter");
   const filterItems = filterBar.querySelectorAll(".ef-item");
   const indicator   = filterBar.querySelector(".ef-indicator");
+  const moreBtn     = document.getElementById("eventMoreBtn");
+
+  function positionMoreBtn() {
+    const btn = document.getElementById("eventMoreBtn");
+    if (!btn) return;
+    const img = document.querySelector(".project-img");
+    if (!img) return;
+    btn.style.top = (window.innerHeight / 2 + img.offsetHeight / 2 + 30) + "px";
+  }
+  positionMoreBtn();
+  window.addEventListener("resize", positionMoreBtn);
 
   function moveIndicator(activeEl) {
     if (!indicator || !activeEl) return;
@@ -608,25 +644,70 @@ window.addEventListener("load", () => {
     item.addEventListener("click", () => {
       const loc = item.dataset.filter;
       window._activeLocFilter = loc === "all" ? "ALL" : loc;
+      currentFilter = loc;
       filterItems.forEach(i => i.classList.remove("active"));
       item.classList.add("active");
       moveIndicator(item);
       if (openCardIdx !== -1) closeCard(false);
-      renderEvents(getNearest8(loc));
+      // Kollabiere Extra-Slots bei Filter-Wechsel
+      if (currentCount === 16) {
+        currentCount = 8;
+        document.querySelectorAll("[data-extra='true']").forEach(el => el.classList.add("spotlight-extra"));
+        if (moreBtn) {
+          moreBtn.querySelector(".emb-label").textContent = "Mehr";
+          moreBtn.querySelector(".emb-arrow").textContent = "↓";
+        }
+      }
+      renderEvents(getNearestN(loc, currentCount));
+      initSpotlight();
+      positionMoreBtn();
+      // More-Button: zeigen wenn Pool > 8
+      if (moreBtn) {
+        const poolSize = getNearestN(loc, 100).length;
+        moreBtn.style.display = poolSize > currentCount ? "" : "none";
+      }
       ScrollTrigger.refresh();
     });
   });
 
-  // Filter + Info-Button visibility via ScrollTrigger
+  // Filter + Info + More-Button visibility via ScrollTrigger
   ScrollTrigger.create({
     trigger: ".spotlight",
     start: "top top",
-    end: `+=${window.innerHeight * 5}px`,
-    onEnter:     () => { filterBar.classList.add("visible"); if (infoBtn) infoBtn.classList.add("visible"); },
-    onLeave:     () => { filterBar.classList.remove("visible"); if (infoBtn) infoBtn.classList.remove("visible"); },
-    onEnterBack: () => { filterBar.classList.add("visible"); if (infoBtn) infoBtn.classList.add("visible"); },
-    onLeaveBack: () => { filterBar.classList.remove("visible"); if (infoBtn) infoBtn.classList.remove("visible"); },
+    end: () => `+=${window.innerHeight * (currentCount === 16 ? 10 : 5)}px`,
+    onEnter:     () => { filterBar.classList.add("visible"); if (infoBtn) infoBtn.classList.add("visible"); if (moreBtn) moreBtn.classList.add("visible"); },
+    onLeave:     () => { filterBar.classList.remove("visible"); if (infoBtn) infoBtn.classList.remove("visible"); if (moreBtn) moreBtn.classList.remove("visible"); },
+    onEnterBack: () => { filterBar.classList.add("visible"); if (infoBtn) infoBtn.classList.add("visible"); if (moreBtn) moreBtn.classList.add("visible"); },
+    onLeaveBack: () => { filterBar.classList.remove("visible"); if (infoBtn) infoBtn.classList.remove("visible"); if (moreBtn) moreBtn.classList.remove("visible"); },
   });
+
+  // More-Button: Initial-Sichtbarkeit prüfen
+  if (moreBtn) {
+    const initPool = getNearestN(currentFilter, 100).length;
+    if (initPool <= 8) moreBtn.style.display = "none";
+    moreBtn.addEventListener("click", () => {
+      if (currentCount === 8) {
+        currentCount = 16;
+        document.querySelectorAll("[data-extra='true']").forEach(el => el.classList.remove("spotlight-extra"));
+        renderEvents(getNearestN(currentFilter, 16));
+        initSpotlight();
+        positionMoreBtn();
+        moreBtn.querySelector(".emb-label").textContent = "Weniger";
+        moreBtn.querySelector(".emb-arrow").textContent = "↑";
+      } else {
+        currentCount = 8;
+        const spotlightTop = document.querySelector(".spotlight").offsetTop;
+        lenis.scrollTo(spotlightTop + window.innerHeight * 5, { immediate: true });
+        document.querySelectorAll("[data-extra='true']").forEach(el => el.classList.add("spotlight-extra"));
+        renderEvents(getNearestN(currentFilter, 8));
+        initSpotlight();
+        positionMoreBtn();
+        moreBtn.querySelector(".emb-label").textContent = "Mehr";
+        moreBtn.querySelector(".emb-arrow").textContent = "↓";
+      }
+      ScrollTrigger.refresh();
+    });
+  }
 
   // currentActiveIdx für Info-Button synchron halten
   lenis.on("scroll", () => {

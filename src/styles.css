@@ -259,7 +259,7 @@ section {
   overflow: hidden;
   position: relative;
   flex-shrink: 0;
-  border-radius: 15px;
+  border-radius: 0;
 }
 
 .project-img::after {
@@ -443,6 +443,7 @@ section {
     width: min(70%, 480px);
     gap: 20svh;
   }
+  .event-more-btn { left: 50%; }
   .project-names { display: none !important; }
   .project-connector { display: none !important; }
   .spotlight::after { display: none; }
@@ -1739,6 +1740,11 @@ section {
   border-color: var(--accent-teal);
 }
 
+/* extra Spotlight-Slots: standardmäßig ausgeblendet */
+.spotlight-extra {
+  display: none;
+}
+
 /* gleitende Markierungslinie links */
 .ef-indicator {
   position: absolute;
@@ -1747,6 +1753,55 @@ section {
   background: var(--accent-teal);
   transition: top 0.35s cubic-bezier(0.4, 0, 0.2, 1), height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   pointer-events: none;
+}
+
+/* ============================================
+   EVENT MORE BUTTON LINKS UNTEN
+   ============================================ */
+.event-more-btn {
+  position: fixed;
+  left: 45%;
+  transform: translateX(-50%);
+  bottom: auto;
+  z-index: 20;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.45s ease;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.22rem;
+}
+.event-more-btn.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+.emb-label {
+  font-family: var(--font-paragraph);
+  font-weight: 400;
+  font-size: 1.0rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,1);
+  transition: color 0.25s ease;
+  line-height: 1.7;
+}
+.emb-arrow {
+  font-size: 0.9rem;
+  color: rgba(255,255,255,1);
+  transition: color 0.25s ease, transform 0.25s ease;
+  display: block;
+}
+.event-more-btn:hover .emb-label,
+.event-more-btn:hover .emb-arrow {
+  color: rgba(255,255,255,0.65);
+}
+.event-more-btn:hover .emb-arrow {
+  transform: translateY(3px);
 }
 
 /* ============================================
