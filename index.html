@@ -136,16 +136,22 @@
     <!-- ─── Hero ────────────────────────────────────────────────────────────── -->
     <section class="intro snap-section" id="intro">
       <div class="section-1-img">
-        <img src="/sig-bg.jpg" alt="" />
+        <img src="/hero-bg.jpg" alt="" />
       </div>
 
-      <div class="hero-bg-text" aria-hidden="true">50</div>
-
       <div class="hero-title">
-        <span class="hero-doc-stroke">D<span class="hero-doc-o">O</span>CK</span>
-        <div class="hero-title-rule"></div>
-        <span class="hero-50-fill">50</span>
-        <span class="hero-since">EST. 2025</span>
+        <div class="hero-top">
+          <img src="/logo-dock50.png" alt="DOCK50" class="hero-logo" />
+          <div class="hero-title-rule"></div>
+          <span class="hero-since">EST. 2025</span>
+        </div>
+        <div class="hero-bottom">
+          <img src="/logo-deck1.png" alt="Deck 1" class="hero-subloc-logo" />
+          <span class="hero-subloc-sep">·</span>
+          <div class="hero-subloc-sky-card">
+            <img src="/logo-skylounge.png" alt="Skylounge" class="hero-subloc-logo hero-subloc-logo--sky" />
+          </div>
+        </div>
       </div>
 
       <!-- Rotating badge -->
@@ -250,63 +256,115 @@
     <!-- ─── Location ─────────────────────────────────────────────────────────── -->
     <section class="location snap-section" id="location">
 
-      <!-- Upper 100vh: skylounge image + side image + data box + info text -->
-      <div class="locationTop">
-        <div class="lt-img">
-          <img src="/loc-skylounge.jpg" alt="DOCK50 Skylounge" />
+      <!-- Tab-Leiste oben über der ganzen Section -->
+      <div class="lt-tabs active-deck1" role="tablist">
+        <div class="lt-tabs-inner">
+          <div class="lt-tabs-slider" aria-hidden="true"></div>
+          <button class="lt-tab lt-tab--deck1 is-active" data-to="deck1" role="tab" aria-selected="true">
+            <span class="lt-tab-num">01</span>
+            <span class="lt-tab-name">Deck 1</span>
+          </button>
+          <button class="lt-tab lt-tab--sky" data-to="sky" role="tab" aria-selected="false">
+            <span class="lt-tab-num">02</span>
+            <span class="lt-tab-name">Skylounge</span>
+          </button>
         </div>
-        <button class="lt-deck-btn"><span>zu Deck1</span><span class="lt-btn-arrow">→</span></button>
-
-        <!-- ─── Panels (Hintergrundbilder only) ─────────────────────────── -->
-        <div class="lt-return-panel">
-          <div class="lt-rp-bg"><img src="/loc-skylounge.jpg" alt="Skylounge" /></div>
-        </div>
-        <div class="lt-deck1-panel">
-          <div class="lt-d1-bg"><img src="/deck1.jpg" alt="DECK1" /></div>
-        </div>
-
-        <!-- ─── Permanenter schwarzer Shade (immer oben) ─────────────────── -->
-        <div class="lt-shade"></div>
-
-        <!-- ─── Skylounge Content ────────────────────────────────────────── -->
-        <div class="lt-data">
-          <div class="lt-data-title">DOCK50<br>Skylounge</div>
-          <div class="lt-data-rule"></div>
-          <div class="lt-data-sub">Flensburg · Hafen<br>Verfügbar für Buchungen</div>
-          <div class="lt-data-rule"></div>
-          <div class="lt-data-list">
-            <div class="lt-data-item"><span class="lt-data-label">Fläche</span><span class="lt-data-val">500 m²</span></div>
-            <div class="lt-data-item"><span class="lt-data-label">Deckenhöhe</span><span class="lt-data-val">6 m</span></div>
-            <div class="lt-data-item"><span class="lt-data-label">Kapazität</span><span class="lt-data-val">300 Pers.</span></div>
-            <div class="lt-data-item"><span class="lt-data-label">Bühne</span><span class="lt-data-val">60 m²</span></div>
-            <div class="lt-data-item"><span class="lt-data-label">Stehplätze</span><span class="lt-data-val">300</span></div>
-            <div class="lt-data-item"><span class="lt-data-label">Sitzplätze</span><span class="lt-data-val">150</span></div>
-          </div>
-          <div class="lt-data-nums" aria-hidden="true">
-            <span>I</span><span>II</span><span>III</span><span>IV</span><span>V</span><span>VI</span>
-          </div>
-        </div>
-        <div class="lt-info">DOCK50 · Skylounge. Eine außergewöhnliche Location direkt am Flensburger Hafen. Ob Konzert, Club Night oder private Veranstaltung — hier entsteht unvergessliche Atmosphäre. Schiffbrücke 50 · 24939 Flensburg. Verfügbar für Buchungen.</div>
-
-        <!-- ─── Deck1 Content (initial opacity 0) ───────────────────────── -->
-        <div class="lt-d1-info">DECK1 · Unterdeck. Platzhaltertext für die Beschreibung des zweiten Stockwerks der Location direkt am Flensburger Hafen.</div>
-        <div class="lt-d1-data">
-          <div class="lt-data-title">DECK1<br>Unterdeck</div>
-          <div class="lt-data-rule"></div>
-          <div class="lt-data-sub">Flensburg · Hafen<br>Verfügbar für Buchungen</div>
-          <div class="lt-data-rule"></div>
-          <div class="lt-data-list">
-            <div class="lt-data-item"><span class="lt-data-label">Fläche</span><span class="lt-data-val">— m²</span></div>
-            <div class="lt-data-item"><span class="lt-data-label">Deckenhöhe</span><span class="lt-data-val">— m</span></div>
-            <div class="lt-data-item"><span class="lt-data-label">Kapazität</span><span class="lt-data-val">—</span></div>
-            <div class="lt-data-item"><span class="lt-data-label">Bühne</span><span class="lt-data-val">— m²</span></div>
-            <div class="lt-data-item"><span class="lt-data-label">Stehplätze</span><span class="lt-data-val">—</span></div>
-            <div class="lt-data-item"><span class="lt-data-label">Sitzplätze</span><span class="lt-data-val">—</span></div>
-          </div>
-        </div>
-        <button class="lt-d1-back"><span>zu Skylounge</span><span class="lt-btn-arrow">→</span></button>
       </div>
 
+      <div class="lt-body">
+
+        <!-- Links: Foto -->
+        <div class="lt-photo">
+
+          <!-- Skylounge Slider -->
+          <div class="lt-photo-img lt-photo-img--sky">
+            <div class="lt-slider" id="sliderSky">
+              <div class="lt-slides-track">
+                <div class="lt-slide"><img src="/loc-skylounge.jpg"   alt="Skylounge" /></div>
+                <div class="lt-slide"><img src="/doc50-concert-1.jpg" alt="Skylounge" /></div>
+                <div class="lt-slide"><img src="/doc50-concert-2.jpg" alt="Skylounge" /></div>
+                <div class="lt-slide"><img src="/doc50-concert-3.jpg" alt="Skylounge" /></div>
+              </div>
+              <button class="lt-arrow lt-arrow--prev" aria-label="Zurück">←</button>
+              <button class="lt-arrow lt-arrow--next" aria-label="Weiter">→</button>
+              <div class="lt-slider-dots">
+                <span class="lt-dot is-active"></span>
+                <span class="lt-dot"></span>
+                <span class="lt-dot"></span>
+                <span class="lt-dot"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Deck 1 Slider -->
+          <div class="lt-photo-img lt-photo-img--deck1">
+            <div class="lt-slider" id="sliderDeck1">
+              <div class="lt-slides-track">
+                <div class="lt-slide"><img src="/loc-deck1-1.jpg"     alt="Deck 1" /></div>
+                <div class="lt-slide"><img src="/loc-deck1-2.jpg"     alt="Deck 1" /></div>
+                <div class="lt-slide"><img src="/doc50-concert-4.jpg" alt="Deck 1" /></div>
+                <div class="lt-slide"><img src="/doc50-concert-5.jpg" alt="Deck 1" /></div>
+              </div>
+              <button class="lt-arrow lt-arrow--prev" aria-label="Zurück">←</button>
+              <button class="lt-arrow lt-arrow--next" aria-label="Weiter">→</button>
+              <div class="lt-slider-dots">
+                <span class="lt-dot is-active"></span>
+                <span class="lt-dot"></span>
+                <span class="lt-dot"></span>
+                <span class="lt-dot"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="lt-photo-label">
+            <span class="lt-photo-addr">Schiffbrücke 50 · 24939 Flensburg</span>
+            <span class="lt-photo-coords">54°46′N · 9°26′E</span>
+          </div>
+        </div>
+
+        <!-- Rechts: Daten-Panel -->
+        <div class="lt-panel">
+
+          <!-- Skylounge View -->
+          <div class="lt-view lt-view--sky">
+            <span class="lt-ghost-num" aria-hidden="true">01</span>
+            <div class="lt-view-head">
+              <span class="lt-eyebrow">Location 01 · Flensburg Hafen</span>
+              <img src="/logo-skylounge.png" alt="Skylounge" class="lt-name-logo lt-name-logo--sky" />
+            </div>
+            <div class="lt-rule"></div>
+            <div class="lt-stats">
+              <div class="lt-stat"><span class="lt-stat-k">Kapazität</span><span class="lt-stat-v">{Infos}</span></div>
+              <div class="lt-stat"><span class="lt-stat-k">Stehplätze</span><span class="lt-stat-v">{Infos}</span></div>
+              <div class="lt-stat"><span class="lt-stat-k">Sitzplätze</span><span class="lt-stat-v">{Infos}</span></div>
+              <div class="lt-stat"><span class="lt-stat-k">Lage</span><span class="lt-stat-v">{Infos}</span></div>
+            </div>
+            <div class="lt-view-foot">
+              <a href="/anfrage.html" class="lt-cta">Verfügbarkeit anfragen <span class="lt-cta-arrow">↗</span></a>
+            </div>
+          </div>
+
+          <!-- Deck1 View -->
+          <div class="lt-view lt-view--deck1">
+            <span class="lt-ghost-num" aria-hidden="true">02</span>
+            <div class="lt-view-head">
+              <span class="lt-eyebrow">Location 02 · Flensburg Hafen</span>
+              <img src="/logo-deck1.png" alt="Deck 1" class="lt-name-logo lt-name-logo--deck1" />
+            </div>
+            <div class="lt-rule"></div>
+            <div class="lt-stats">
+              <div class="lt-stat"><span class="lt-stat-k">Kapazität</span><span class="lt-stat-v">{Infos}</span></div>
+              <div class="lt-stat"><span class="lt-stat-k">Stehplätze</span><span class="lt-stat-v">{Infos}</span></div>
+              <div class="lt-stat"><span class="lt-stat-k">Sitzplätze</span><span class="lt-stat-v">{Infos}</span></div>
+              <div class="lt-stat"><span class="lt-stat-k">Lage</span><span class="lt-stat-v">{Infos}</span></div>
+            </div>
+            <div class="lt-view-foot">
+              <a href="/anfrage.html" class="lt-cta">Verfügbarkeit anfragen <span class="lt-cta-arrow">↗</span></a>
+            </div>
+          </div>
+
+        </div>
+      </div>
 
     </section>
 

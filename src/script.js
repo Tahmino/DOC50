@@ -723,120 +723,42 @@ window.addEventListener("load", () => {
   window._activeLocFilter = "ALL";
   ScrollTrigger.refresh();
 
-  // ─── Deck1 Panel ─────────────────────────────────────────────────────────
+  // ─── Location: Tab Switch (Skylounge ↔ Deck1) ─────────────────────────
   {
-    const deckBtn   = document.querySelector(".lt-deck-btn");
-    const deckPanel = document.querySelector(".lt-deck1-panel");
-    const locTop    = document.querySelector(".locationTop");
-
-    if (deckBtn && deckPanel && locTop) {
-      let savedBtnRect = null;
-
-      deckBtn.addEventListener("click", () => {
-        savedBtnRect = deckBtn.getBoundingClientRect();
-        const ltRect = locTop.getBoundingClientRect();
-
-        gsap.set(deckPanel, {
-          display: "block",
-          top:    savedBtnRect.top  - ltRect.top,
-          left:   savedBtnRect.left - ltRect.left,
-          width:  savedBtnRect.width,
-          height: savedBtnRect.height,
-          borderRadius: "0 32px 0 32px",
-        });
-
-        gsap.to(deckPanel, {
-          top: 0, left: 0, width: "100%", height: "100%",
-          borderRadius: "0px",
-          duration: 0.75, ease: "expo.inOut",
-        });
-
-        gsap.to([".lt-info", ".lt-data", deckBtn], {
-          opacity: 0, duration: 0.25, ease: "power2.in",
-        });
-
-        gsap.fromTo(
-          [".lt-d1-info", ".lt-d1-data", ".lt-d1-back"],
-          { opacity: 0, y: 16 },
-          { opacity: 1, y: 0, duration: 0.5, stagger: 0.1, delay: 0.6, ease: "power2.out",
-            onStart: () => {
-              document.querySelectorAll(".lt-d1-info, .lt-d1-data, .lt-d1-back").forEach(el => el.style.pointerEvents = "auto");
-              document.querySelectorAll(".lt-info, .lt-data, .lt-deck-btn").forEach(el => el.style.pointerEvents = "none");
-            }
-          }
-        );
+    function switchLocation(to) {
+      document.querySelectorAll(".lt-tab").forEach((tab) => {
+        const active = tab.dataset.to === to;
+        tab.classList.toggle("is-active", active);
+        tab.setAttribute("aria-selected", String(active));
       });
-
-      const d1Back      = document.querySelector(".lt-d1-back");
-      const returnPanel = document.querySelector(".lt-return-panel");
-
-      if (d1Back && returnPanel) {
-        d1Back.addEventListener("click", () => {
-          const backRect = d1Back.getBoundingClientRect();
-          const ltRect   = locTop.getBoundingClientRect();
-
-          // Fade out deck1 content
-          gsap.to([".lt-d1-info", ".lt-d1-data", ".lt-d1-back"], {
-            opacity: 0, duration: 0.25, ease: "power2.in",
-          });
-
-          // Position return panel at the back button, then expand to fullscreen
-          gsap.set(returnPanel, {
-            display: "block",
-            top:    backRect.top  - ltRect.top,
-            left:   backRect.left - ltRect.left,
-            width:  backRect.width,
-            height: backRect.height,
-            borderRadius: "0 32px 0 32px",
-          });
-
-          gsap.to(returnPanel, {
-            top: 0, left: 0, width: "100%", height: "100%",
-            borderRadius: "0px",
-            duration: 0.75, ease: "expo.inOut", delay: 0.1,
-            onComplete: () => {
-              gsap.set(deckPanel,   { display: "none" });
-              gsap.set(returnPanel, { display: "none" });
-              gsap.set([".lt-d1-info", ".lt-d1-data", ".lt-d1-back"], { opacity: 0 });
-              document.querySelectorAll(".lt-d1-info, .lt-d1-data, .lt-d1-back").forEach(el => el.style.pointerEvents = "none");
-              gsap.fromTo(
-                [".lt-info", ".lt-data", deckBtn],
-                { opacity: 0, y: 16 },
-                { opacity: 1, y: 0, duration: 0.5, stagger: 0.1, ease: "power2.out",
-                  onStart: () => {
-                    document.querySelectorAll(".lt-info, .lt-data, .lt-deck-btn").forEach(el => el.style.pointerEvents = "auto");
-                  }
-                }
-              );
-            },
-          });
-        });
+      const panel = document.querySelector(".lt-panel");
+      if (panel) {
+        panel.classList.toggle("is-sky",   to === "sky");
+        panel.classList.toggle("is-deck1", to === "deck1");
       }
-    }
-  }
-
-  // ─── LocationTop Text Animation ─────────────────────────────────────────
-  {
-    const ltInfo = document.querySelector(".lt-info");
-    if (ltInfo) {
-      const split = new SplitText(ltInfo, { type: "lines", linesClass: "lt-line" });
-
-      // All lines start gray
-      gsap.set(split.lines, { color: "rgba(255,255,255,0.25)" });
-
-      // Scrub: each line goes from gray to white as you scroll, one after the other
-      gsap.to(split.lines, {
-        color: "rgba(255,255,255,1)",
-        ease: "none",
-        stagger: { each: 0.12, from: "start" },
-        scrollTrigger: {
-          trigger: ".location",
-          start: "top 60%",
-          end: "top -20%",
-          scrub: 1.2,
-        },
+      const tabsEl = document.querySelector(".lt-tabs");
+      if (tabsEl) {
+        tabsEl.classList.toggle("active-sky",   to === "sky");
+        tabsEl.classList.toggle("active-deck1", to === "deck1");
+      }
+      document.querySelectorAll(".lt-view").forEach((v) => {
+        const active = v.classList.contains("lt-view--" + to);
+        gsap.to(v, {
+          opacity: active ? 1 : 0, duration: 0.45, ease: "power2.inOut",
+          onStart()    { if (active)  gsap.set(v, { pointerEvents: "auto" });  },
+          onComplete() { if (!active) gsap.set(v, { pointerEvents: "none" }); },
+        });
+      });
+      document.querySelectorAll(".lt-photo-img").forEach((p) => {
+        const active = p.classList.contains("lt-photo-img--" + to);
+        gsap.to(p, { opacity: active ? 1 : 0, duration: 0.75, ease: "power2.inOut" });
       });
     }
+    document.querySelectorAll(".lt-tab").forEach((tab) => {
+      tab.addEventListener("click", () => switchLocation(tab.dataset.to));
+    });
+    const panel = document.querySelector(".lt-panel");
+    if (panel) panel.classList.add("is-deck1");
   }
 
   // ─── Section Snap ────────────────────────────────────────────────────────
@@ -962,5 +884,43 @@ window.addEventListener("load", () => {
     el.addEventListener("mouseenter", () => gsap.to(cursor, { scale: 3.5, duration: 0.3, ease: "power2.out" }));
     el.addEventListener("mouseleave", () => gsap.to(cursor, { scale: 1,   duration: 0.3, ease: "power2.out" }));
   });
+
+  // ─── Location Slider ──────────────────────────────────────────────────────
+  function initSlider(sliderEl) {
+    if (!sliderEl) return;
+    const slides = Array.from(sliderEl.querySelectorAll(".lt-slide"));
+    const dots   = Array.from(sliderEl.querySelectorAll(".lt-dot"));
+    const btnPrev = sliderEl.querySelector(".lt-arrow--prev");
+    const btnNext = sliderEl.querySelector(".lt-arrow--next");
+    const DURATION = 0.6, AUTO_MS = 4000;
+    let current = 0, animating = false, timer;
+    slides.forEach((s, i) => {
+      gsap.set(s, { x: i === 0 ? "0%" : "100%", opacity: i === 0 ? 1 : 0 });
+      if (i === 0) s.classList.add("is-active");
+    });
+    function goTo(next, dir) {
+      if (animating || next === current) return;
+      animating = true;
+      const prev = current; current = next;
+      dots[prev]?.classList.remove("is-active");
+      dots[current]?.classList.add("is-active");
+      gsap.set(slides[current], { x: dir > 0 ? "100%" : "-100%", opacity: 1 });
+      slides[current].classList.add("is-active");
+      gsap.to(slides[prev], { x: dir > 0 ? "-100%" : "100%", duration: DURATION, ease: "power3.inOut",
+        onComplete: () => { slides[prev].classList.remove("is-active"); gsap.set(slides[prev], { opacity: 0 }); }
+      });
+      gsap.to(slides[current], { x: "0%", duration: DURATION, ease: "power3.inOut",
+        onComplete: () => { animating = false; }
+      });
+    }
+    function next() { clearInterval(timer); goTo((current + 1) % slides.length, 1); startAuto(); }
+    function prev() { clearInterval(timer); goTo((current - 1 + slides.length) % slides.length, -1); startAuto(); }
+    function startAuto() { timer = setInterval(() => goTo((current + 1) % slides.length, 1), AUTO_MS); }
+    btnNext?.addEventListener("click", next);
+    btnPrev?.addEventListener("click", prev);
+    startAuto();
+  }
+  initSlider(document.getElementById("sliderSky"));
+  initSlider(document.getElementById("sliderDeck1"));
 
 }); // end window.load
