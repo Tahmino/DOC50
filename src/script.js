@@ -707,6 +707,45 @@ window.addEventListener("load", () => {
   const filterItems = filterBar.querySelectorAll(".ef-item");
   const indicator   = filterBar.querySelector(".ef-indicator");
   const moreBtn     = document.getElementById("eventMoreBtn");
+  const emptyState  = document.getElementById("eventEmptyState");
+  const emptyBtn    = document.getElementById("eventEmptyBtn");
+
+  const EMPTY_BTN_COLORS = {
+    "D50 Deck 1":    "#E63289",
+    "D50 Skylounge": "rgb(212,170,40)",
+  };
+
+  function updateEmptyState(filter) {
+    const pool = getNearestN(filter, 100).length;
+    const spotlightEl = document.querySelector(".spotlight");
+    if (pool === 0 && filter !== "all") {
+      if (emptyState) emptyState.style.display = "";
+      if (emptyBtn) {
+        const c = EMPTY_BTN_COLORS[filter] || "#fff";
+        emptyBtn.style.borderColor = c;
+        emptyBtn.style.color = c;
+      }
+      if (spotlightEl) spotlightEl.classList.add("spotlight-empty");
+      if (moreBtn) moreBtn.style.display = "none";
+    } else {
+      if (emptyState) emptyState.style.display = "none";
+      if (spotlightEl) spotlightEl.classList.remove("spotlight-empty");
+    }
+  }
+
+  if (emptyBtn) {
+    emptyBtn.addEventListener("click", () => {
+      resetFilter();
+      renderEvents(getNearestN("all", currentCount));
+      initSpotlight();
+      updateEmptyState("all");
+      if (moreBtn) {
+        const poolSize = getNearestN("all", 100).length;
+        moreBtn.style.display = poolSize > currentCount ? "" : "none";
+      }
+      ScrollTrigger.refresh();
+    });
+  }
   let moreBtnFadeTimer = null;
 
   function moveIndicator(activeEl) {
@@ -729,6 +768,7 @@ window.addEventListener("load", () => {
     );
     renderMobileEvents(getNearestN("all", 8));
     setSpotlightGlow("all");
+    updateEmptyState("all");
   }
 
   moveIndicator(filterBar.querySelector(".ef-item.active"));
@@ -763,6 +803,7 @@ window.addEventListener("load", () => {
       renderEvents(getNearestN(loc, currentCount));
       initSpotlight();
       setSpotlightGlow(loc);
+      updateEmptyState(loc);
       if (moreBtn) {
         const poolSize = getNearestN(loc, 100).length;
         moreBtn.style.display = poolSize > currentCount ? "" : "none";
@@ -848,6 +889,7 @@ window.addEventListener("load", () => {
       renderMobileEvents(getNearestN(newFilter, 8));
       updateMecMoreBtn();
       setSpotlightGlow(newFilter);
+      updateEmptyState(newFilter);
     });
   });
 
@@ -1052,6 +1094,7 @@ window.addEventListener("load", () => {
       // Mobile Event-Liste neu rendern
       renderMobileEvents(getNearestN(filterName, 8));
       setSpotlightGlow(filterName);
+      updateEmptyState(filterName);
     }
     const heroLocBtns = document.querySelectorAll(".hero-loc-btn");
     function setHeroActive(btn) {

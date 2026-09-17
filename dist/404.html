@@ -4,11 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>404 — DOCK50</title>
-  <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Special+Gothic+Expanded+One&family=Geist+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <meta name="robots" content="noindex" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <style>
+    @font-face { font-family: "Special Gothic Expanded One"; src: url("/fonts/SpecialGothicExpandedOne-Regular.woff2") format("woff2"), url("/fonts/SpecialGothicExpandedOne-Regular.ttf") format("truetype"); font-weight: 400; font-display: swap; }
+    @font-face { font-family: "Geist Mono"; src: url("/fonts/GeistMono-Light.woff2") format("woff2"), url("/fonts/GeistMono-Light.ttf") format("truetype"); font-weight: 300; font-display: swap; }
+    @font-face { font-family: "Geist Mono"; src: url("/fonts/GeistMono-Regular.woff2") format("woff2"), url("/fonts/GeistMono-Regular.ttf") format("truetype"); font-weight: 400; font-display: swap; }
+    @font-face { font-family: "Geist Mono"; src: url("/fonts/GeistMono-Medium.woff2") format("woff2"), url("/fonts/GeistMono-Medium.ttf") format("truetype"); font-weight: 500; font-display: swap; }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
@@ -81,15 +83,19 @@
 </head>
 <body>
 
-  <a href="./" class="logo">
-    <img src="./logo-dock50.png" alt="DOCK50" />
+  <a href="/" class="logo">
+    <img src="/logo-dock50.png" alt="DOCK50" />
   </a>
 
   <p class="num">404</p>
 
   <p class="message">Diese Seite existiert nicht</p>
 
-  <a href="./" class="back">← Zurück zur Startseite</a>
+  <a href="/" class="back">← Zurück zur Startseite</a>
+
+  <footer style="position:absolute;bottom:2rem;left:0;right:0;text-align:center;font-size:0.6rem;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.25)">
+    <a href="/impressum.html" style="color:inherit;text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.15)">Impressum</a> · <a href="/datenschutz.html" style="color:inherit;text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.15)">Datenschutz</a>
+  </footer>
 
 </body>
 </html>

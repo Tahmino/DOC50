@@ -4,8 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Anfrage — DOCK50</title>
+    <meta name="description" content="Jetzt Anfrage für eure Veranstaltung im DOCK50 Flensburg stellen. Skylounge & Deck 1 für Konzerte, Partys und private Events." />
+    <meta property="og:title" content="Anfrage — DOCK50" />
+    <meta property="og:description" content="Jetzt Anfrage für eure Veranstaltung im DOCK50 Flensburg stellen." />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="de_DE" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <style>
-      @import url("https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap");
+      @font-face { font-family: "DM Sans"; src: url("/fonts/DMSans-Regular.woff2") format("woff2"), url("/fonts/DMSans-Regular.ttf") format("truetype"); font-weight: 400; font-display: swap; }
+      @font-face { font-family: "DM Sans"; src: url("/fonts/DMSans-Bold.woff2") format("woff2"), url("/fonts/DMSans-Bold.ttf") format("truetype"); font-weight: 700; font-display: swap; }
 
       :root {
         --font-header: "Special Gothic Expanded One", sans-serif;
@@ -20,10 +27,8 @@
       }
 
       * { margin: 0; padding: 0; box-sizing: border-box; }
-
       html { overflow-x: hidden; scroll-behavior: smooth; }
-
-      body { font-family: "Google Sans", sans-serif; background: var(--bg); color: var(--text); }
+      body { font-family: "DM Sans", sans-serif; background: var(--bg); color: var(--text); }
 
       body::before {
         content: "";
@@ -35,7 +40,6 @@
       /* ═══════════════════════════════════════════
          TOPBAR
       ═══════════════════════════════════════════ */
-
       .topbar {
         position: fixed; top: 0; left: 0; right: 0;
         height: var(--topbar-h);
@@ -48,13 +52,11 @@
         background: transparent;
         border-bottom: 1px solid transparent;
       }
-
       .topbar.solid {
         background: rgba(17,17,17,0.92);
         backdrop-filter: blur(20px);
         border-bottom-color: var(--border);
       }
-
       .tb-back {
         font-family: var(--font-mono); font-size: 0.58rem;
         color: rgba(255,255,255,0.50); letter-spacing: 0.18em;
@@ -62,15 +64,12 @@
         display: flex; align-items: center; gap: 0.4rem;
         transition: color 0.25s;
       }
-
       .tb-back:hover { color: rgba(255,255,255,0.80); }
-
       .tb-logo {
         font-family: var(--font-header); font-size: 0.88rem;
         color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.72);
         text-decoration: none; justify-self: center;
       }
-
       .tb-tag {
         font-family: var(--font-mono); font-size: 0.52rem;
         color: rgba(255,255,255,0.25); letter-spacing: 0.18em;
@@ -80,20 +79,17 @@
       /* ═══════════════════════════════════════════
          HERO
       ═══════════════════════════════════════════ */
-
       .hero {
         height: 100svh;
         position: relative; overflow: hidden;
         display: flex; flex-direction: column; justify-content: flex-end;
       }
-
       .hero-img {
         position: absolute; inset: 0;
         width: 100%; height: 100%;
         object-fit: cover; object-position: center 25%;
         z-index: 0;
       }
-
       .hero-overlay {
         position: absolute; inset: 0; z-index: 1;
         background: linear-gradient(
@@ -109,13 +105,11 @@
         position: relative; z-index: 2;
         padding: 0 2.5rem;
       }
-
       .hero-eyebrow {
         font-family: var(--font-mono); font-size: 0.58rem;
         color: rgba(255,255,255,0.42); letter-spacing: 0.26em;
         text-transform: uppercase; margin-bottom: 0.5rem;
       }
-
       .hero-title {
         font-family: var(--font-header);
         font-size: clamp(5rem, 17vw, 16rem);
@@ -133,23 +127,19 @@
         border-top: 1px solid rgba(255,255,255,0.10);
         gap: 0;
       }
-
       .hero-stat {
         display: flex; flex-direction: column; gap: 0.1rem;
         padding-right: 2rem; margin-right: 2rem;
         border-right: 1px solid rgba(255,255,255,0.10);
       }
-
       .stat-val {
         font-family: var(--font-header); font-size: 1.3rem;
         color: rgba(255,255,255,0.88); letter-spacing: -0.02em; line-height: 1.1;
       }
-
       .stat-key {
         font-family: var(--font-mono); font-size: 0.48rem;
         color: rgba(255,255,255,0.30); letter-spacing: 0.22em; text-transform: uppercase;
       }
-
       .hero-cta {
         margin-left: auto;
         font-family: var(--font-mono); font-size: 0.58rem;
@@ -158,17 +148,14 @@
         display: flex; align-items: center; gap: 0.5rem;
         transition: color 0.25s;
       }
-
       .hero-cta:hover { color: rgba(255,255,255,0.65); }
 
       /* ═══════════════════════════════════════════
          FORM SECTION
       ═══════════════════════════════════════════ */
-
       .form-section { position: relative; z-index: 1; background: var(--bg); }
 
       /* Each block: big number left + fields right */
-
       .form-block {
         display: grid;
         grid-template-columns: clamp(8rem, 16vw, 14rem) 1fr;
@@ -200,19 +187,14 @@
       }
 
       /* Fields */
-
       .frow { display: grid; grid-template-columns: 1fr 1fr; gap: 0 3rem; }
-
       .fld { margin-bottom: 2rem; }
-
       .fld label {
         display: block; font-family: var(--font-mono);
         font-size: 0.50rem; color: var(--text-dim);
         letter-spacing: 0.24em; text-transform: uppercase; margin-bottom: 0.5rem;
       }
-
       .fld label.req::after { content: " *"; color: rgba(255,255,255,0.15); }
-
       .fld input,
       .fld select,
       .fld textarea {
@@ -225,38 +207,29 @@
         caret-color: rgba(255,255,255,0.6);
         -webkit-appearance: none; appearance: none; border-radius: 0;
       }
-
       .fld input::placeholder,
       .fld textarea::placeholder { color: rgba(255,255,255,0.22); }
-
       .fld input:focus,
       .fld select:focus,
       .fld textarea:focus { border-bottom-color: var(--border-hi); }
-
       .fld input.err,
       .fld select.err { border-bottom-color: rgba(255,70,70,0.55); }
-
       .fld select {
         cursor: pointer;
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='rgba(255,255,255,0.28)' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
         background-repeat: no-repeat; background-position: right 0 center;
         padding-right: 1.2rem; color: var(--text);
       }
-
       .fld select option { background: #1c1c1c; color: #fff; }
-
       .fld select option[value=""] { color: rgba(255,255,255,0.28); }
-
       .fld textarea { resize: vertical; min-height: 130px; line-height: 1.65; }
 
       /* Submit block */
-
       .form-submit {
         border-top: 1px solid var(--border);
         display: grid;
         grid-template-columns: clamp(8rem, 16vw, 14rem) 1fr;
       }
-
       .submit-side {
         padding: 2.8rem 0 4rem 2.5rem;
         display: flex; align-items: flex-start;
@@ -266,14 +239,12 @@
         -webkit-text-stroke: 1px rgba(255,255,255,0.08);
         letter-spacing: -0.04em; line-height: 1;
       }
-
       .submit-body {
         padding: 2.8rem 2.5rem 4rem 2rem;
         border-left: 1px solid var(--border);
         display: flex; flex-direction: column; justify-content: space-between;
         gap: 2rem;
       }
-
       .submit-headline {
         font-family: var(--font-header);
         font-size: clamp(1.4rem, 3vw, 2.6rem);
@@ -281,14 +252,11 @@
         -webkit-text-stroke: 1px rgba(255,255,255,0.70);
         letter-spacing: -0.02em; line-height: 1;
       }
-
       .submit-note {
         font-family: var(--font-mono); font-size: 0.52rem;
         color: rgba(255,255,255,0.30); letter-spacing: 0.08em; line-height: 1.7;
       }
-
       .submit-actions { display: flex; align-items: center; gap: 1.2rem; flex-wrap: wrap; }
-
       .btn-send {
         font-family: var(--font-mono); font-size: 0.68rem;
         color: rgba(255,255,255,0.95); letter-spacing: 0.22em;
@@ -298,9 +266,7 @@
         cursor: pointer; transition: background 0.3s, border-color 0.3s;
         white-space: nowrap;
       }
-
       .btn-send:hover { background: rgba(255,255,255,0.10); border-color: rgba(255,255,255,0.52); }
-
       .btn-mail {
         font-family: var(--font-mono); font-size: 0.58rem;
         color: rgba(255,255,255,0.40); letter-spacing: 0.14em;
@@ -308,36 +274,29 @@
         border-bottom: 1px solid rgba(255,255,255,0.16);
         padding-bottom: 0.15rem; transition: color 0.25s;
       }
-
       .btn-mail:hover { color: rgba(255,255,255,0.70); }
 
       /* ═══════════════════════════════════════════
          SUCCESS
       ═══════════════════════════════════════════ */
-
       .success { display: none; padding: 8rem 2.5rem; text-align: center; }
-
       .success.show { display: block; }
-
       .success-mark {
         font-family: var(--font-header); font-size: 3.5rem;
         color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.25);
         margin-bottom: 2rem;
       }
-
       .success-title {
         font-family: var(--font-header);
         font-size: clamp(2.5rem, 7vw, 6rem);
         color: transparent; -webkit-text-stroke: 1.5px rgba(255,255,255,0.78);
         letter-spacing: -0.03em; margin-bottom: 1.2rem;
       }
-
       .success-sub {
         font-family: var(--font-mono); font-size: 0.76rem;
         color: var(--text-mid); line-height: 1.8; letter-spacing: 0.06em;
         margin-bottom: 2.5rem;
       }
-
       .success-link {
         font-family: var(--font-mono); font-size: 0.62rem;
         color: rgba(255,255,255,0.25); letter-spacing: 0.18em;
@@ -345,32 +304,26 @@
         border-bottom: 1px solid rgba(255,255,255,0.09);
         padding-bottom: 0.2rem; transition: color 0.25s;
       }
-
       .success-link:hover { color: rgba(255,255,255,0.55); }
 
       /* ═══════════════════════════════════════════
          TICKER
       ═══════════════════════════════════════════ */
-
       .ticker {
         overflow: hidden; width: 100%;
         padding: 1.2rem 0;
         border-top: 1px solid rgba(255,255,255,0.05);
       }
-
       .ticker-track {
         display: flex; gap: 2rem; white-space: nowrap;
         animation: tickerScroll 22s linear infinite; width: max-content;
       }
-
       .ticker-track span {
         font-family: var(--font-mono); font-size: 0.55rem;
         color: rgba(255,255,255,0.25); letter-spacing: 0.22em;
         text-transform: uppercase; flex-shrink: 0;
       }
-
       .ticker-track .sep { color: rgba(255,255,255,0.14); }
-
       @keyframes tickerScroll {
         from { transform: translateX(0); }
         to   { transform: translateX(-50%); }
@@ -379,7 +332,6 @@
       /* ═══════════════════════════════════════════
          CURSOR
       ═══════════════════════════════════════════ */
-
       #cur {
         width: 12px; height: 12px; border-radius: 50%;
         position: fixed; top: 0; left: 0; z-index: 9999;
@@ -391,7 +343,6 @@
       /* ═══════════════════════════════════════════
          RESPONSIVE
       ═══════════════════════════════════════════ */
-
       @media (hover: none) { #cur { display: none; } }
 
       @media (max-width: 900px) {
@@ -456,14 +407,14 @@
 
     <!-- Topbar -->
     <header class="topbar" id="topbar">
-      <a href="./" class="tb-back">← Zurück</a>
-      <a href="./" class="tb-logo">DOCK50</a>
+      <a href="/" class="tb-back">← Zurück</a>
+      <a href="/" class="tb-logo">DOCK50</a>
       <span class="tb-tag">Venue-Buchung</span>
     </header>
 
     <!-- Hero -->
     <section class="hero">
-      <img src="./hero-bg.jpg" alt="DOCK50 Venue" class="hero-img" />
+      <img src="/hero-bg.jpg" alt="DOCK50 Venue" class="hero-img" />
       <div class="hero-overlay"></div>
 
       <div class="hero-content">
@@ -598,7 +549,7 @@
         <div class="success-mark">✦</div>
         <p class="success-title">DANKE.</p>
         <p class="success-sub">Ihre Anfrage wurde gesendet.<br/>Wir melden uns innerhalb von 48 Stunden.</p>
-        <a href="./" class="success-link">← Zurück zur Website</a>
+        <a href="/" class="success-link">← Zurück zur Website</a>
       </div>
     </section>
 
@@ -697,5 +648,8 @@ ${v("msg") || "—"}
         }, 800);
       });
     </script>
+    <footer style="position:relative;z-index:1;border-top:1px solid rgba(255,255,255,0.12);padding:1.5rem 2rem;text-align:center;font-size:0.6rem;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.38)">
+      <a href="/impressum.html" style="color:inherit;text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.15)">Impressum</a> · <a href="/datenschutz.html" style="color:inherit;text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.15)">Datenschutz</a>
+    </footer>
   </body>
 </html>
