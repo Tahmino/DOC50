@@ -2,7 +2,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import Lenis from "lenis";
-import { parseEventDate, getNearestN, eventLibrary } from "./events.js";
+const { parseEventDate, getNearestN, eventLibrary } = await import(/* @vite-ignore */ "/events.js");
 
 gsap.registerPlugin(ScrollTrigger);
 

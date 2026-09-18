@@ -1,4 +1,4 @@
-import { findEvent, parseEventDate } from "./events.js";
+const { findEvent, parseEventDate } = await import(/* @vite-ignore */ "/events.js");
 
 const MONTHS_LONG = ["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
 const DAYS_LONG   = ["Sonntag","Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag"];
