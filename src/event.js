@@ -3,23 +3,20 @@ const { findEvent, parseEventDate } = await import(/* @vite-ignore */ "/events.j
 const MONTHS_LONG = ["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
 const DAYS_LONG   = ["Sonntag","Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag"];
 
-window.addEventListener("DOMContentLoaded", () => {
-  const params = new URLSearchParams(window.location.search);
-  const loc    = params.get("loc");
-  const date   = params.get("date");
+const params = new URLSearchParams(window.location.search);
+const loc    = params.get("loc");
+const date   = params.get("date");
 
-  const notFound = document.getElementById("evNotFound");
-  const main     = document.getElementById("evMain");
+const notFound = document.getElementById("evNotFound");
+const main     = document.getElementById("evMain");
 
-  const ev = findEvent(loc, date);
+const ev = findEvent(loc, date);
 
-  if (!ev) {
-    notFound.style.display = "";
-    main.style.display = "none";
-    document.getElementById("evHeroImg").style.display = "none";
-    return;
-  }
-
+if (!ev) {
+  notFound.style.display = "";
+  main.style.display = "none";
+  document.getElementById("evHeroImg").style.display = "none";
+} else {
   // Location logo
   const logoImg = document.querySelector(".ev-topbar-logo img");
   if (ev.raum === "D50 Skylounge") {
@@ -67,4 +64,4 @@ window.addEventListener("DOMContentLoaded", () => {
   if (ev.hasTicket && ev.ticketUrl) {
     ctaWrapper.innerHTML = `<a href="${ev.ticketUrl}" class="ev-cta" target="_blank" rel="noopener" style="background:${ctaColor};color:#0e0e0e;">Tickets anfragen <span class="ev-cta-arrow">↗</span></a>`;
   }
-});
+}
