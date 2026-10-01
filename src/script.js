@@ -2,7 +2,28 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import Lenis from "lenis";
-const { parseEventDate, getNearestN, eventLibrary } = await import(/* @vite-ignore */ "/events.js");
+const { parseEventDate, getNearestN: _getNearestN, eventLibrary } = await import(/* @vite-ignore */ "/events.js");
+
+// Deck 1 = alles was NICHT Skylounge ist (inkl. "D50 Deck 1 & 2", leerer raum, etc.)
+function getNearestN(filter, n = 8) {
+  if (filter === "all" || filter.toLowerCase() === "d50 skylounge") return _getNearestN(filter, n);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return eventLibrary
+    .filter(ev => ev.raum.toLowerCase() !== "d50 skylounge")
+    .filter(ev => parseEventDate(ev.datum) >= today)
+    .sort((a, b) => parseEventDate(a.datum) - parseEventDate(b.datum))
+    .slice(0, n);
+}
+
+// Prüft ob ein Event NICHT zum aktiven Filter gehört (= ausgegraut)
+function isFilteredOut(location) {
+  const f = window._activeLocFilter;
+  if (!f || f === "ALL") return false;
+  if (f.toLowerCase() === "d50 skylounge") return location.toLowerCase() !== "d50 skylounge";
+  // Deck 1 Filter: alles was nicht Skylounge ist gehört dazu
+  return location.toLowerCase() === "d50 skylounge";
+}
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -336,7 +357,7 @@ function initSpotlight() {
     projectNameItems.forEach((item, i) => {
       const slot        = getSlot(i, displayN);
       const dest        = SLOTS[slot];
-      const filteredOut = window._activeLocFilter && window._activeLocFilter !== "ALL" && item.dataset.location !== window._activeLocFilter;
+      const filteredOut = isFilteredOut(item.dataset.location || "");
       const alpha       = filteredOut ? 0.05 : SLOT_OPACITY[slot];
       const color       = filteredOut ? "rgba(255,255,255,0.07)" : SLOT_COLOR[slot];
       const numColor    = (slot === "CENTER" && !filteredOut) ? "rgba(255,255,255,0.50)" : "rgba(255,255,255,0.08)";
@@ -403,7 +424,7 @@ function initSpotlight() {
 
       projectImgs.forEach((img) => {
         const r = img.getBoundingClientRect();
-        const filteredOut = window._activeLocFilter && window._activeLocFilter !== "ALL" && img.dataset.location !== window._activeLocFilter;
+        const filteredOut = isFilteredOut(img.dataset.location || "");
         const zone = VH * 0.28;
         const isCenter = r.top <= mid + zone && r.bottom >= mid - zone;
         gsap.set(img, { opacity: filteredOut ? 0.06 : (isCenter ? 1 : 0.35) });
